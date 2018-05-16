@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Better CSS Inject Options</title>
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: #EEE;
+        }
+
+        main {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .stylesheets ul {
+            list-style: none;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="new-stylesheet-form">
+            <form action="#">
+                <div class="form-field">
+                    <input type="text" name="stylesheet-url" placeholder="Insert stylesheet URL here..">
+                    <input type="submit" value="Add stylesheet">
+                </div>
+            </form>
+        </div>
+        
+        <div class="stylesheets">
+            <div class="message">No styleesheets added yet.</div>
+            
+            <ul>
+                <!-- <li>
+                    <label class="stylesheet" for="stylesheet-01">Stylesheet URL 1</label>
+                    <input type="checkbox" name="stylesheet-01" id="stylesheet-01">
+                </li>
+
+                <li>
+                    <label class="stylesheet" for="stylesheet-02">Stylesheet URL 2</label>
+                    <input type="checkbox" name="stylesheet-02" id="stylesheet-02">
+                </li>
+
+                <li>
+                    <label class="stylesheet" for="stylesheet-03">Stylesheet URL 3</label>
+                    <input type="checkbox" name="stylesheet-03" id="stylesheet-03">
+                </li>
+
+                <li>
+                    <label class="stylesheet" for="stylesheet-04">Stylesheet URL 4</label>
+                    <input type="checkbox" name="stylesheet-04" id="stylesheet-04">
+                </li> -->
+            </ul>
+        </div>
+    </main>
+
+    <script src="options.js"></script>
+</body>
+</html>

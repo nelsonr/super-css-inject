@@ -1,0 +1,24 @@
+{
+    "name": "Better CSS Inject",
+    "version": "1.0",
+    "description": "Better CSS Inject with multiple options",
+    "manifest_version": 2,
+
+    "permissions": [
+        "activeTab",
+        "storage"
+    ],
+
+    "background": {
+        "scripts": [
+            "background.js"
+        ],
+        "persistent": false
+    },
+
+    "browser_action": {
+        "default_title": "Enable Better CSS Inject"
+    },
+
+    "options_page": "options.html"
+  }
