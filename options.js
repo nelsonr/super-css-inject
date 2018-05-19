@@ -1,36 +1,147 @@
-var stylesheets = [];
-var form = document.querySelector('form');
+function BetterCSSInject() {
+    return {
+        stylesheets: []
+    };
+}
 
-window.addEventListener('load', function (ev) {
-    chrome.storage.local.get(['stylesheets'], function (results) {
-        console.log("The results is: ", results.stylesheets);
+function render(stylesheetsData) {
+    let documentFragment = document.createDocumentFragment();
+    let stylesheetsList = document.querySelector('.stylesheets ul');
+
+    if (stylesheetsData.length === 0) {
+        message.classList.remove('hidden');
+        stylesheetsList.innerHTML = '';
         
-        if (results.stylesheets !== undefined) {
-            stylesheets = results.stylesheets;
-        }
+        return false;
+    } else {
+        message.classList.add('hidden');
+    }
 
-        if (stylesheets.length === 0) {
-            return false;
-        }
+    stylesheetsData.forEach((stylesheet, index) => {
+        let li = document.createElement('li');
 
-        let documentFragment = document.createDocumentFragment();
-        let stylesheetsList = document.querySelector('.stylesheets ul');
+        let span = document.createElement('span');
+        span.innerText = stylesheet.url;
 
-        stylesheets.forEach((stylesheet) => {
-            let li = document.createElement('li');
-            let span = document.createElement('span');
+        let deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('delete');
+        deleteBtn.innerText = 'X';
 
-            span.innerText = stylesheet.url;
-
-            li.appendChild(span);
-            documentFragment.appendChild(li);
+        deleteBtn.addEventListener('click', (ev) => {
+            ev.preventDefault();
+            ev.stopPropagation();
+            
+            console.log('Delete stylesheet!');
+            removeStylesheet(index);
         });
 
-        stylesheetsList.appendChild(documentFragment);
+        let toggleBtn = document.createElement('button');
+        toggleBtn.classList.add('toggle');
+        toggleBtn.innerText = 'Set Active';
+
+        toggleBtn.addEventListener('click', (ev) => {
+            ev.target.parentElement.classList.toggle('active');
+            toggleStylesheet(index);
+        });
+
+        let buttonGroup = document.createElement('div');
+        buttonGroup.classList.add('button-group');
+
+        buttonGroup.appendChild(toggleBtn);
+        buttonGroup.appendChild(deleteBtn);
+
+        if (stylesheet.active) {
+            li.classList.add('active');
+        }
+
+        li.setAttribute('data-index', index);
+        li.appendChild(span);
+        li.appendChild(buttonGroup);
+
+        documentFragment.appendChild(li);
+    });
+
+    stylesheetsList.innerHTML = '';
+    stylesheetsList.appendChild(documentFragment);
+
+    return true;
+}
+
+function updateStorage(data) {
+    chrome.storage.local.set({ BetterCSSInject: data }, () => {
+        console.log('storage updated: ', data);
+    });
+}
+
+function addStylesheet(stylesheetURL) {
+    let urlList = betterCSSInject.stylesheets.map((el) => el.url);
+
+    if (urlList.indexOf(stylesheetURL) !== -1) {
+        return false;
+    }
+
+    betterCSSInject.stylesheets = betterCSSInject.stylesheets.map((stylesheet) => {
+        stylesheet.active = false;
+
+        return stylesheet;
+    })
+    
+    betterCSSInject.stylesheets.push({
+        url: stylesheetURL,
+        active: true
+    });
+
+    updateStorage(betterCSSInject);
+    render(betterCSSInject.stylesheets);
+
+    return true;
+}
+
+function removeStylesheet(stylesheetIndex) {
+    betterCSSInject.stylesheets = betterCSSInject.stylesheets.filter((_, index) => {
+        return index !== stylesheetIndex;
+    });
+
+    updateStorage(betterCSSInject);
+    render(betterCSSInject.stylesheets);
+
+    return true;
+}
+
+function toggleStylesheet(stylesheetIndex) {
+    betterCSSInject.stylesheets = betterCSSInject.stylesheets.map((stylesheet, index) => {
+        if (stylesheetIndex === index) {
+            stylesheet.active = true;
+        } else {
+            stylesheet.active = false;
+        }
+        
+        return stylesheet;
+    });
+
+    updateStorage(betterCSSInject);
+    render(betterCSSInject.stylesheets);
+
+    return true;
+}
+
+let form = document.querySelector('.stylesheets__form');
+let message = document.querySelector('.stylesheets__message');
+let betterCSSInject = new BetterCSSInject();
+
+window.addEventListener('load', (ev) => {
+    chrome.storage.local.get(['BetterCSSInject'], (storage) => {
+        console.log("The storage is: ", storage.BetterCSSInject);
+
+        if (storage.BetterCSSInject !== undefined) {
+            betterCSSInject = storage.BetterCSSInject;
+            
+            render(betterCSSInject.stylesheets)
+        }
     });
 });
 
-form.addEventListener('submit', function (ev) {
+form.addEventListener('submit', (ev) => {
     ev.preventDefault();
     let styleSheetField = form.querySelector('input');
 
@@ -38,14 +149,6 @@ form.addEventListener('submit', function (ev) {
         return false;
     }
 
-    stylesheets.push({
-        url: styleSheetField.value,
-        active: true
-    });
-
-    let stylesheetsData = stylesheets;
-
-    chrome.storage.local.set({stylesheets: stylesheetsData}, function () {
-        console.log('storage updated: ', stylesheetsData);
-    })
+    addStylesheet(styleSheetField.value);
+    styleSheetField.value = '';  
 })

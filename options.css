@@ -1,0 +1,169 @@
+:root {
+    --primary-color: #3F51B5;
+    --primary-color-dark: #002984;
+    --primary-color-light: #757DE8;
+
+    --secondary-color: #D32F2F;
+    --secondary-color-dark: #9A0007;
+    --secondary-color-light: #FF6659;
+
+    --green-color: #4CAF50;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: #EEE;
+    font-size: 16px;
+}
+
+main {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 30px;
+}
+
+input {
+    padding: 10px 12px;
+    border-radius: 4px;
+    border: 1px solid #E4E4E4;
+}
+
+input:focus {
+    outline: none;
+    border-color: #B0B0B0;
+}
+
+input[type="submit"] {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #FFF;
+}
+
+input[type="submit"]:hover {
+    background-color: var(--primary-color-dark);
+    border-color: var(--primary-color-dark);
+}
+
+input[type="submit"]:active {
+    background-color: var(--primary-color-light);
+    border-color: var(--primary-color-light);
+}
+
+.hidden {
+    display: none;
+}
+
+.stylesheets {
+    width: 100%;
+    max-width: 600px;
+}
+
+.stylesheets__form {
+    display: flex;
+}
+
+.stylesheets__form input[type="text"] {
+    flex: 1;
+    margin-right: 6px;
+}
+
+.stylesheets ul {
+    list-style: none;
+    margin: 0;
+    margin-top: 30px;
+    padding: 0;
+}
+
+.stylesheets ul li {
+    text-align: left;
+    background-color: #FFF;
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 3px solid #ECECEC;
+    border-radius: 4px;
+    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.2);
+}
+
+.stylesheets ul li:hover {
+    border-color: var(--primary-color);
+}
+
+.stylesheets ul li.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #FFF;
+}
+
+.active button.toggle {
+    opacity: 0;
+}
+
+.active button.delete {
+    background-color: transparent;
+    border-color: transparent;
+    color: #FFF;
+}
+
+button {
+    border-radius: 4px;
+    background-color: #ECECEC;
+    border: 1px solid #ECECEC;
+    padding: 6px 8px;
+}
+
+button:hover {
+    background-color: #BABABA;
+    border-color: #BABABA;
+}
+
+button:active {
+    outline: none;
+}
+
+button.toggle {
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    color: #FFF;
+}
+
+button.delete {
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 4px 7px;
+}
+
+button.delete:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: #FFF;
+}
+
+button.delete:active {
+    background-color: var(--secondary-color-dark);
+    border-color: var(--secondary-color-dark);
+}
+
+.button-group button {   
+    margin-left: 10px;
+}
+
+.button-group button:first-child {
+    margin: 0;
+}
