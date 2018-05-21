@@ -1,4 +1,9 @@
-function BetterCSSInject() {
+let browser = chrome || browser;
+let form = document.querySelector('.stylesheets__form');
+let message = document.querySelector('.stylesheets__message');
+let superCSSInject = new SuperCSSInject();
+
+function SuperCSSInject() {
     return {
         stylesheets: []
     };
@@ -68,48 +73,48 @@ function render(stylesheetsData) {
 }
 
 function updateStorage(data) {
-    chrome.storage.local.set({ BetterCSSInject: data }, () => {
+    browser.storage.local.set({ SuperCSSInject: data }, () => {
         console.log('storage updated: ', data);
     });
 }
 
 function addStylesheet(stylesheetURL) {
-    let urlList = betterCSSInject.stylesheets.map((el) => el.url);
+    let urlList = superCSSInject.stylesheets.map((el) => el.url);
 
     if (urlList.indexOf(stylesheetURL) !== -1) {
         return false;
     }
 
-    betterCSSInject.stylesheets = betterCSSInject.stylesheets.map((stylesheet) => {
+    superCSSInject.stylesheets = superCSSInject.stylesheets.map((stylesheet) => {
         stylesheet.active = false;
 
         return stylesheet;
     })
     
-    betterCSSInject.stylesheets.push({
+    superCSSInject.stylesheets.push({
         url: stylesheetURL,
         active: true
     });
 
-    updateStorage(betterCSSInject);
-    render(betterCSSInject.stylesheets);
+    updateStorage(superCSSInject);
+    render(superCSSInject.stylesheets);
 
     return true;
 }
 
 function removeStylesheet(stylesheetIndex) {
-    betterCSSInject.stylesheets = betterCSSInject.stylesheets.filter((_, index) => {
+    superCSSInject.stylesheets = superCSSInject.stylesheets.filter((_, index) => {
         return index !== stylesheetIndex;
     });
 
-    updateStorage(betterCSSInject);
-    render(betterCSSInject.stylesheets);
+    updateStorage(superCSSInject);
+    render(superCSSInject.stylesheets);
 
     return true;
 }
 
 function toggleStylesheet(stylesheetIndex) {
-    betterCSSInject.stylesheets = betterCSSInject.stylesheets.map((stylesheet, index) => {
+    superCSSInject.stylesheets = superCSSInject.stylesheets.map((stylesheet, index) => {
         if (stylesheetIndex === index) {
             stylesheet.active = true;
         } else {
@@ -119,24 +124,20 @@ function toggleStylesheet(stylesheetIndex) {
         return stylesheet;
     });
 
-    updateStorage(betterCSSInject);
-    render(betterCSSInject.stylesheets);
+    updateStorage(superCSSInject);
+    render(superCSSInject.stylesheets);
 
     return true;
 }
 
-let form = document.querySelector('.stylesheets__form');
-let message = document.querySelector('.stylesheets__message');
-let betterCSSInject = new BetterCSSInject();
-
 window.addEventListener('load', (ev) => {
-    chrome.storage.local.get(['BetterCSSInject'], (storage) => {
-        console.log("The storage is: ", storage.BetterCSSInject);
+    browser.storage.local.get(['SuperCSSInject'], (storage) => {
+        console.log("The storage is: ", storage.SuperCSSInject);
 
-        if (storage.BetterCSSInject !== undefined) {
-            betterCSSInject = storage.BetterCSSInject;
+        if (storage.SuperCSSInject !== undefined) {
+            superCSSInject = storage.SuperCSSInject;
             
-            render(betterCSSInject.stylesheets)
+            render(superCSSInject.stylesheets)
         }
     });
 });

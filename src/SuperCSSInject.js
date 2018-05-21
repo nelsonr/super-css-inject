@@ -1,9 +1,11 @@
+let browser = chrome || browser;
+
 function injectStylesheets() {
     console.log('Inject stylesheets');
     
-    chrome.storage.local.get(['BetterCSSInject'], (storage) => {
-        if (storage.BetterCSSInject) {
-            storage.BetterCSSInject.stylesheets.forEach((stylesheet) => {
+    browser.storage.local.get(['SuperCSSInject'], (storage) => {
+        if (storage.SuperCSSInject) {
+            storage.SuperCSSInject.stylesheets.forEach((stylesheet) => {
                 if (stylesheet.active) {
                     var link = document.createElement('link');
                     link.rel = 'stylesheet';
@@ -19,9 +21,9 @@ function injectStylesheets() {
 function clearStylesheets() {
     console.log('clear stylesheets');
 
-    chrome.storage.local.get(['BetterCSSInject'], (storage) => {
-        if (storage.BetterCSSInject) {
-            storage.BetterCSSInject.stylesheets
+    browser.storage.local.get(['SuperCSSInject'], (storage) => {
+        if (storage.SuperCSSInject) {
+            storage.SuperCSSInject.stylesheets
                 .filter((stylesheet) => stylesheet.active)
                 .forEach((stylesheet) => {
                     let links = document.head.querySelectorAll(`link[href="${stylesheet.url}"`);
@@ -35,10 +37,10 @@ function clearStylesheets() {
 }
 
 window.addEventListener('load', (ev) => {
-    chrome.runtime.sendMessage({action: 'pageLoad'});
+    browser.runtime.sendMessage({action: 'pageLoad'});
 });
 
-chrome.runtime.onMessage.addListener((message) => {
+browser.runtime.onMessage.addListener((message) => {
     if (message.action == 'inject') {
         injectStylesheets();
     }

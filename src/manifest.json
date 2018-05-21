@@ -1,7 +1,7 @@
 {
-    "name": "Better CSS Inject",
+    "name": "Super CSS Inject",
     "version": "1.0",
-    "description": "Better CSS Inject with multiple options",
+    "description": "Keep multiple stylesheets ready to inject and change on the fly!",
     "manifest_version": 2,
 
     "permissions": [
@@ -9,17 +9,21 @@
         "storage"
     ],
 
+    "icons": {
+        "48": "icons/48x48.png",
+        "128": "icons/128x128.png"
+    },
+
     "background": {
         "scripts": [
             "background.js"
-        ],
-        "persistent": false
+        ]
     },
 
     "content_scripts": [
         {
             "js": [
-                "betterCSSInject.js"
+                "SuperCSSInject.js"
             ],
             "matches": [
                 "http://*/*",
@@ -29,8 +33,11 @@
     ],
 
     "browser_action": {
-        "default_title": "Enable Better CSS Inject"
+        "default_title": "Enable Super CSS Inject"
     },
 
-    "options_page": "options.html"
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": true
+    }
   }

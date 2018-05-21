@@ -20,6 +20,7 @@ body {
     padding: 0;
     background-color: #EEE;
     font-size: 16px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 main {
@@ -65,6 +66,7 @@ input[type="submit"]:active {
 .stylesheets {
     width: 100%;
     max-width: 600px;
+    margin-top: 10px;
 }
 
 .stylesheets__form {
@@ -74,6 +76,10 @@ input[type="submit"]:active {
 .stylesheets__form input[type="text"] {
     flex: 1;
     margin-right: 6px;
+}
+
+.stylesheets__message {
+    margin-top: 20px;
 }
 
 .stylesheets ul {
