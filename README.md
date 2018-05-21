@@ -1,4 +1,4 @@
-## Super CSS Inject
+## <img src="https://github.com/nelsonr/super_css_inject/raw/master/src/icons/48x48.png" width="24" /> Super CSS Inject
 
 Keep multiple stylesheets ready to inject and change on the fly. Works with **LiveReload**.
 Compatible with Chrome and Firefox.
