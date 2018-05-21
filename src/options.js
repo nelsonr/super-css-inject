@@ -1,13 +1,9 @@
 let browser = chrome || browser;
 let form = document.querySelector('.stylesheets__form');
 let message = document.querySelector('.stylesheets__message');
-let superCSSInject = new SuperCSSInject();
-
-function SuperCSSInject() {
-    return {
-        stylesheets: []
-    };
-}
+let superCSSInject = {
+    stylesheets: []
+};
 
 function render(stylesheetsData) {
     let documentFragment = document.createDocumentFragment();
@@ -41,7 +37,7 @@ function render(stylesheetsData) {
         });
 
         let toggleBtn = document.createElement('button');
-        toggleBtn.classList.add('toggle');
+        toggleBtn.classList.add('toggle', 'primary');
         toggleBtn.innerText = 'Set Active';
 
         toggleBtn.addEventListener('click', (ev) => {

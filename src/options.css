@@ -1,13 +1,7 @@
 :root {
-    --primary-color: #3F51B5;
-    --primary-color-dark: #002984;
-    --primary-color-light: #757DE8;
-
-    --secondary-color: #D32F2F;
-    --secondary-color-dark: #9A0007;
-    --secondary-color-light: #FF6659;
-
-    --green-color: #4CAF50;
+    --primary-color: #f03738;
+    --primary-color-light: #f98484;
+    --primary-color-dark: #BC0303;
 }
 
 * {
@@ -15,12 +9,48 @@
 }
 
 body {
-    height: 100vh;
+    height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #EEE;
+    background-color: #F1F1F1;
     font-size: 16px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Roboto, system-ui, sans-serif;
+    margin-top: 56px;
+}
+
+.column {
+    max-width: 650px;
+    margin: auto;
+}
+
+header {
+    background-color: #424242;
+    color: #FFF;
+    padding: 10px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+header .column {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.header .logo {
+    width: 36px;
+    height: auto;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+header .title {
+    display: inline-block;
+    margin: 0;
+    margin-left: 20px;
+    font-weight: normal;
 }
 
 main {
@@ -29,13 +59,13 @@ main {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 0 30px;
 }
 
 input {
     padding: 10px 12px;
     border-radius: 4px;
     border: 1px solid #E4E4E4;
+    font-size: 0.9em;
 }
 
 input:focus {
@@ -47,6 +77,7 @@ input[type="submit"] {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
     color: #FFF;
+    cursor: pointer;
 }
 
 input[type="submit"]:hover {
@@ -65,8 +96,8 @@ input[type="submit"]:active {
 
 .stylesheets {
     width: 100%;
-    max-width: 600px;
-    margin-top: 10px;
+    margin-top: 30px;
+    font-size: 0.9em;
 }
 
 .stylesheets__form {
@@ -79,7 +110,7 @@ input[type="submit"]:active {
 }
 
 .stylesheets__message {
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 .stylesheets ul {
@@ -93,17 +124,15 @@ input[type="submit"]:active {
     text-align: left;
     background-color: #FFF;
     width: 100%;
-    margin-top: 10px;
+    margin-top: 20px;
     padding: 10px 12px;
-    font-size: 14px;
     line-height: 1;
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border: 3px solid #ECECEC;
     border-radius: 4px;
-    box-shadow: 1px 1px 5px 0px rgba(0,0,0,0.2);
+    border: 1px solid rgb(212, 212, 212);
 }
 
 .stylesheets ul li:hover {
@@ -136,6 +165,7 @@ button {
 button:hover {
     background-color: #BABABA;
     border-color: #BABABA;
+    cursor: pointer;
 }
 
 button:active {
@@ -150,20 +180,19 @@ button.toggle {
 
 button.delete {
     color: #000;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 12px;
     padding: 4px 7px;
 }
 
 button.delete:hover {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
+    background-color: var(--primary-color-dark);
+    border-color: var(--primary-color-dark);
     color: #FFF;
 }
 
 button.delete:active {
-    background-color: var(--secondary-color-dark);
-    border-color: var(--secondary-color-dark);
+    background-color: var(--primary-color-light);
+    border-color: var(--primary-color-light);
 }
 
 .button-group button {   
