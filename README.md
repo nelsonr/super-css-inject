@@ -3,6 +3,8 @@
 Keep multiple stylesheets ready to inject and change on the fly. Works with **LiveReload**.
 Compatible with Chrome and Firefox.
 
+<img src="https://github.com/nelsonr/super_css_inject/raw/master/preview.png" />
+
 ### How to install (Chrome)
 
 1. Clone or download the repository zip file
