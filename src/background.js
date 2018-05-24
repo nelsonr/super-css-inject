@@ -2,8 +2,6 @@ let activeTabs = {};
 let browser = chrome || browser;
 
 browser.browserAction.onClicked.addListener((tab) => {
-    console.log('Extension icon clicked!');
-
     if (activeTabs[tab.id] === undefined) {
         activeTabs[tab.id] = true;
 

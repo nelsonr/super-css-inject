@@ -1,8 +1,6 @@
 let browser = chrome || browser;
 
 function injectStylesheets() {
-    console.log('Inject stylesheets');
-    
     browser.storage.local.get(['SuperCSSInject'], (storage) => {
         if (storage.SuperCSSInject) {
             storage.SuperCSSInject.stylesheets.forEach((stylesheet) => {
@@ -19,8 +17,6 @@ function injectStylesheets() {
 }
 
 function clearStylesheets() {
-    console.log('clear stylesheets');
-
     browser.storage.local.get(['SuperCSSInject'], (storage) => {
         if (storage.SuperCSSInject) {
             storage.SuperCSSInject.stylesheets
