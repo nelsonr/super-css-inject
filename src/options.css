@@ -2,6 +2,15 @@
     --primary-color: #f03738;
     --primary-color-light: #f98484;
     --primary-color-dark: #BC0303;
+
+    --green: #16C18E;
+    --green-shade-1: #14B082;
+
+    --red: #C13016;
+    --red-shade-1: #912511;
+    
+    --gray: #AAAAAA;
+    --gray-shade-1: #8C8C8C;
 }
 
 * {
@@ -49,7 +58,7 @@ header .column {
 header .title {
     display: inline-block;
     margin: 0;
-    margin-left: 20px;
+    margin-left: 14px;
     font-weight: normal;
 }
 
@@ -63,9 +72,10 @@ main {
 
 input {
     padding: 10px 12px;
-    border-radius: 4px;
+    border-radius: 2px;
     border: 1px solid #E4E4E4;
-    font-size: 0.9em;
+    font-size: 14px;
+    font-weight: 300;
 }
 
 input:focus {
@@ -74,34 +84,29 @@ input:focus {
 }
 
 input[type="submit"] {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+    background-color: var(--green);
+    border-color: var(--green);
     color: #FFF;
     cursor: pointer;
 }
 
 input[type="submit"]:hover {
-    background-color: var(--primary-color-dark);
-    border-color: var(--primary-color-dark);
+    background-color: var(--green-shade-1);
+    border-color: var(--green-shade-1);
 }
 
 input[type="submit"]:active {
-    background-color: var(--primary-color-light);
-    border-color: var(--primary-color-light);
+    box-shadow: inset 0px 3px 5px rgba(0,0,0,0.3);
 }
 
 .hidden {
     display: none;
 }
 
-.stylesheets {
-    width: 100%;
-    margin-top: 30px;
-    font-size: 0.9em;
-}
-
 .stylesheets__form {
     display: flex;
+    width: 100%;
+    margin-top: 30px;
 }
 
 .stylesheets__form input[type="text"] {
@@ -111,94 +116,108 @@ input[type="submit"]:active {
 
 .stylesheets__message {
     margin-top: 30px;
+    letter-spacing: 0.6px;
 }
 
-.stylesheets ul {
-    list-style: none;
-    margin: 0;
+.stylesheets__list {
     margin-top: 30px;
-    padding: 0;
+    width: 100%;
 }
 
-.stylesheets ul li {
-    text-align: left;
-    background-color: #FFF;
-    width: 100%;
-    margin-top: 20px;
-    padding: 10px 12px;
-    line-height: 1;
-    position: relative;
+.stylesheet {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 50px;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #FFF;
+    color: #222;
+    font-size: 14px;
+    font-weight: 300;
     border-radius: 4px;
-    border: 1px solid rgb(212, 212, 212);
 }
 
-.stylesheets ul li:hover {
-    border-color: var(--primary-color);
+.stylesheet:first-child {
+    margin-top: 0;
 }
 
-.stylesheets ul li.active {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
+.stylesheet--active button.stylesheet__toggle,
+.stylesheet--active button.stylesheet__toggle:hover {
+    background-color: var(--green);
+}
+
+.stylesheet__actions {
+    display: flex;
+    justify-content: space-between
+}
+
+.stylesheet button {
+    width: 30px;
+    height: 30px;
+    background-color: var(--gray);
     color: #FFF;
-}
-
-.active button.toggle {
-    opacity: 0;
-}
-
-.active button.delete {
-    background-color: transparent;
-    border-color: transparent;
-    color: #FFF;
-}
-
-button {
-    border-radius: 4px;
-    background-color: #ECECEC;
-    border: 1px solid #ECECEC;
-    padding: 6px 8px;
-}
-
-button:hover {
-    background-color: #BABABA;
-    border-color: #BABABA;
+    border-radius: 2px;
+    margin-left: 10px;
+    display: block;
+    position: relative;
+    border: transparent;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: 0;
     cursor: pointer;
 }
 
-button:active {
-    outline: none;
+.stylesheet button:hover {
+    background-color: var(--gray-shade-1);
 }
 
-button.toggle {
-    background-color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-    color: #FFF;
+.stylesheet button:active {
+    box-shadow: inset 0px 3px 5px rgba(0,0,0,0.3);
 }
 
-button.delete {
-    color: #000;
-    font-size: 12px;
-    padding: 4px 7px;
+.stylesheet button:first-child {
+    margin-left: 0;
 }
 
-button.delete:hover {
-    background-color: var(--primary-color-dark);
-    border-color: var(--primary-color-dark);
-    color: #FFF;
+.stylesheet__toggle:after {
+    content: '';
+    display: block;
+    position: relative;
+    top: -2px;
+    transform: rotate(-45deg);
+    border-left: 3px solid;
+    border-bottom: 3px solid;
+    height: 6px;
+    width: 14px;
 }
 
-button.delete:active {
-    background-color: var(--primary-color-light);
-    border-color: var(--primary-color-light);
+.stylesheet button.stylesheet__delete {
+    background-color: var(--red);
 }
 
-.button-group button {   
-    margin-left: 10px;
+.stylesheet button.stylesheet__delete:hover {
+    background-color: var(--red-shade-1);
 }
 
-.button-group button:first-child {
-    margin: 0;
+.stylesheet__delete:after {
+    content: '';
+    display: block;
+    position: absolute;
+    transform: rotate(-45deg);
+    width: 3px;
+    height: 15px;
+    background-color: #FFF;
+}
+
+.stylesheet__delete:before {
+    content: '';
+    display: block;
+    position: absolute;
+    transform: rotate(45deg);
+    width: 3px;
+    height: 15px;
+    background-color: #FFF;
 }

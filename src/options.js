@@ -7,7 +7,7 @@ let superCSSInject = {
 
 function render(stylesheetsData) {
     let documentFragment = document.createDocumentFragment();
-    let stylesheetsList = document.querySelector('.stylesheets ul');
+    let stylesheetsList = document.querySelector('.stylesheets__list');
 
     if (stylesheetsData.length === 0) {
         message.classList.remove('hidden');
@@ -19,14 +19,26 @@ function render(stylesheetsData) {
     }
 
     stylesheetsData.forEach((stylesheet, index) => {
-        let li = document.createElement('li');
+        let stylesheetContainer = document.createElement('div');
+        stylesheetContainer.classList.add('stylesheet');
+        
+        let stylesheetURL = document.createElement('div');
+        stylesheetURL.classList.add('stylesheet__url');
+        stylesheetURL.innerText = stylesheet.url;
 
-        let span = document.createElement('span');
-        span.innerText = stylesheet.url;
+        let stylesheetActions = document.createElement('div');
+        stylesheetActions.classList.add('stylesheet__actions');
 
+        let toggleBtn = document.createElement('button');
+        toggleBtn.classList.add('stylesheet__toggle');
+
+        toggleBtn.addEventListener('click', (ev) => {
+            ev.target.parentElement.classList.toggle('active');
+            toggleStylesheet(index);
+        });
+        
         let deleteBtn = document.createElement('button');
-        deleteBtn.classList.add('delete');
-        deleteBtn.innerText = 'X';
+        deleteBtn.classList.add('stylesheet__delete');
 
         deleteBtn.addEventListener('click', (ev) => {
             ev.preventDefault();
@@ -36,30 +48,18 @@ function render(stylesheetsData) {
             removeStylesheet(index);
         });
 
-        let toggleBtn = document.createElement('button');
-        toggleBtn.classList.add('toggle', 'primary');
-        toggleBtn.innerText = 'Set Active';
-
-        toggleBtn.addEventListener('click', (ev) => {
-            ev.target.parentElement.classList.toggle('active');
-            toggleStylesheet(index);
-        });
-
-        let buttonGroup = document.createElement('div');
-        buttonGroup.classList.add('button-group');
-
-        buttonGroup.appendChild(toggleBtn);
-        buttonGroup.appendChild(deleteBtn);
+        stylesheetActions.appendChild(toggleBtn);
+        stylesheetActions.appendChild(deleteBtn);
 
         if (stylesheet.active) {
-            li.classList.add('active');
+            stylesheetContainer.classList.add('stylesheet--active');
         }
 
-        li.setAttribute('data-index', index);
-        li.appendChild(span);
-        li.appendChild(buttonGroup);
+        stylesheetContainer.setAttribute('data-index', index);
+        stylesheetContainer.appendChild(stylesheetURL);
+        stylesheetContainer.appendChild(stylesheetActions);
 
-        documentFragment.appendChild(li);
+        documentFragment.appendChild(stylesheetContainer);
     });
 
     stylesheetsList.innerHTML = '';
