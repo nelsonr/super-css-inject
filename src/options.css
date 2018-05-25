@@ -9,8 +9,8 @@
     --red: #C13016;
     --red-shade-1: #912511;
     
-    --gray: #AAAAAA;
-    --gray-shade-1: #8C8C8C;
+    --gray: #D6D6D6;
+    --gray-shade-1: #B0B0B0;
 }
 
 * {
@@ -72,22 +72,32 @@ main {
 
 input {
     padding: 10px 12px;
-    border-radius: 2px;
+    border-radius: 3px;
     border: 1px solid #E4E4E4;
     font-size: 14px;
     font-weight: 300;
+    height: 40px;
 }
 
 input:focus {
     outline: none;
-    border-color: #B0B0B0;
+    border-color: var(--green);
+}
+
+input[type="submit"],
+button {
+    color: #FFF;
+    cursor: pointer;
+    /* box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12); */
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 12px;
+    border: 0;
 }
 
 input[type="submit"] {
     background-color: var(--green);
     border-color: var(--green);
-    color: #FFF;
-    cursor: pointer;
 }
 
 input[type="submit"]:hover {
@@ -130,20 +140,20 @@ input[type="submit"]:active {
     align-items: center;
     height: 50px;
     padding: 10px;
-    margin-top: 20px;
+    margin-top: 14px;
     background-color: #FFF;
     color: #222;
     font-size: 14px;
     font-weight: 300;
     border-radius: 4px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1), 0 1px 5px 0 rgba(0,0,0,0.12);
 }
 
 .stylesheet:first-child {
     margin-top: 0;
 }
 
-.stylesheet--active button.stylesheet__toggle,
-.stylesheet--active button.stylesheet__toggle:hover {
+.stylesheet--active button.stylesheet__toggle {
     background-color: var(--green);
 }
 
@@ -168,10 +178,15 @@ input[type="submit"]:active {
     align-items: center;
     outline: 0;
     cursor: pointer;
+    box-shadow: none;
 }
 
 .stylesheet button:hover {
     background-color: var(--gray-shade-1);
+}
+
+.stylesheet--active button.stylesheet__toggle:hover {
+    background-color: var(--green-shade-1);
 }
 
 .stylesheet button:active {
