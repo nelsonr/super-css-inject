@@ -20,7 +20,3 @@ The extension icon should be now visible in Chrome menu.
 1. Open the options page by right-clicking the extension icon
 2. Add a stylesheet URL to the list
 3. Now in the page where you want to inject the stylesheet just click on the extension icon
-
-### Known Issues
-
-Reloading a page in Firefox will not reapply the stylesheet automatically.

@@ -11,6 +11,7 @@
 
     "icons": {
         "48": "icons/48x48.png",
+        "64": "icons/64x64.png",
         "128": "icons/128x128.png"
     },
 
@@ -28,7 +29,8 @@
             "matches": [
                 "http://*/*",
                 "https://*/*"
-            ]
+            ],
+            "run_at": "document_end"
         }
     ],
 
