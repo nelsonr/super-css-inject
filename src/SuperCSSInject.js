@@ -9,6 +9,7 @@ function injectStylesheets() {
                     link.rel = 'stylesheet';
                     link.type = 'text/css';
                     link.href = stylesheet.url;
+                    link.classList.add('SuperCSSInject');
                     document.head.appendChild(link);
                 }
             });
@@ -17,19 +18,11 @@ function injectStylesheets() {
 }
 
 function clearStylesheets() {
-    browser.storage.local.get(['SuperCSSInject'], (storage) => {
-        if (storage.SuperCSSInject) {
-            storage.SuperCSSInject.stylesheets
-                .filter((stylesheet) => stylesheet.active)
-                .forEach((stylesheet) => {
-                    let links = document.head.querySelectorAll(`link[href="${stylesheet.url}"`);
-
-                    if (links.length > 0) {
-                        links.forEach((link) => link.remove());
-                    } 
-                });
-        }
-    });
+    let links = document.querySelectorAll('link.SuperCSSInject');
+    
+    if (links.length > 0) {
+        links.forEach((link) => link.remove());
+    }
 }
 
 window.addEventListener('load', (ev) => {
