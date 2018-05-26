@@ -70,6 +70,11 @@ main {
     text-align: center;
 }
 
+.note {
+    color: #595959;
+    font-size: 13px;
+}
+
 input {
     padding: 10px 12px;
     border-radius: 3px;
@@ -114,14 +119,21 @@ input[type="submit"]:active {
 }
 
 .stylesheets__form {
-    display: flex;
     width: 100%;
     margin-top: 30px;
+}
+
+.stylesheets__form-group {
+    display: flex;
 }
 
 .stylesheets__form input[type="text"] {
     flex: 1;
     margin-right: 6px;
+}
+
+.stylesheets__form .note {
+    margin-top: 10px;
 }
 
 .stylesheets__message {

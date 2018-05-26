@@ -1,4 +1,5 @@
 let browser = chrome || browser;
+let isFirefox = /Firefox\/\d{1,2}/.test(navigator.userAgent);
 let form = document.querySelector('.stylesheets__form');
 let message = document.querySelector('.stylesheets__message');
 let superCSSInject = {
@@ -70,7 +71,7 @@ function render(stylesheetsData) {
 
 function updateStorage(data) {
     browser.storage.local.set({ SuperCSSInject: data }, () => {
-        console.log('storage updated: ', data);
+        // console.log('storage updated: ', data);
     });
 }
 
@@ -127,9 +128,16 @@ function toggleStylesheet(stylesheetIndex) {
 }
 
 window.addEventListener('load', (ev) => {
+    // show mixed content note in firefox
+    if (isFirefox) {
+        let note = document.querySelector('.note');
+        
+        if (note) {
+            note.classList.remove('hidden');
+        }
+    }
+    
     browser.storage.local.get(['SuperCSSInject'], (storage) => {
-        console.log("The storage is: ", storage.SuperCSSInject);
-
         if (storage.SuperCSSInject !== undefined) {
             superCSSInject = storage.SuperCSSInject;
             
