@@ -1,0 +1,25 @@
+{
+    "name": "super_css_inject",
+    "version": "1.1.0",
+    "description": "Keep multiple stylesheets ready to inject and change on the fly. Works with **LiveReload**. Compatible with Chrome and Firefox.",
+    "main": "index.js",
+    "dependencies": {
+        "stylelint-config-recommended": "^2.2.0"
+    },
+    "devDependencies": {
+        "eslint": "^6.1.0"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/nelsonr/super_css_inject.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/nelsonr/super_css_inject/issues"
+    },
+    "homepage": "https://github.com/nelsonr/super_css_inject#readme"
+}

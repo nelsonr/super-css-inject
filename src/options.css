@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #f03738;
-    --primary-color-light: #f98484;
+    --primary-color: #F03738;
+    --primary-color-light: #F98484;
     --primary-color-dark: #BC0303;
 
     --green: #16C18E;
@@ -8,7 +8,7 @@
 
     --red: #C13016;
     --red-shade-1: #912511;
-    
+
     --gray: #D6D6D6;
     --gray-shade-1: #B0B0B0;
 }
@@ -89,7 +89,7 @@ input:focus {
     border-color: var(--green);
 }
 
-input[type="submit"],
+input[type='submit'],
 button {
     color: #FFF;
     cursor: pointer;
@@ -100,48 +100,48 @@ button {
     border: 0;
 }
 
-input[type="submit"] {
+input[type='submit'] {
     background-color: var(--green);
     border-color: var(--green);
 }
 
-input[type="submit"]:hover {
+input[type='submit']:hover {
     background-color: var(--green-shade-1);
     border-color: var(--green-shade-1);
 }
 
-input[type="submit"]:active {
-    box-shadow: inset 0px 3px 5px rgba(0,0,0,0.3);
+input[type='submit']:active {
+    box-shadow: inset 0px 3px 5px rgba(0, 0, 0, 0.3);
 }
 
 .hidden {
     display: none;
 }
 
-.stylesheets__form {
+.stylesheets-form {
     width: 100%;
     margin-top: 30px;
 }
 
-.stylesheets__form-group {
+.stylesheets-form__group {
     display: flex;
 }
 
-.stylesheets__form input[type="text"] {
+.stylesheets-form input[type='text'] {
     flex: 1;
     margin-right: 6px;
 }
 
-.stylesheets__form .note {
+.stylesheets-form .note {
     margin-top: 10px;
 }
 
-.stylesheets__message {
+.stylesheets-message {
     margin-top: 30px;
     letter-spacing: 0.6px;
 }
 
-.stylesheets__list {
+.stylesheets-list {
     margin-top: 30px;
     width: 100%;
 }
@@ -158,7 +158,7 @@ input[type="submit"]:active {
     font-size: 14px;
     font-weight: 300;
     border-radius: 4px;
-    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.1), 0 1px 5px 0 rgba(0,0,0,0.12);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
 .stylesheet:first-child {
@@ -171,7 +171,7 @@ input[type="submit"]:active {
 
 .stylesheet__actions {
     display: flex;
-    justify-content: space-between
+    justify-content: space-between;
 }
 
 .stylesheet button {
@@ -181,7 +181,6 @@ input[type="submit"]:active {
     color: #FFF;
     border-radius: 2px;
     margin-left: 10px;
-    display: block;
     position: relative;
     border: transparent;
     padding: 0;
@@ -202,7 +201,7 @@ input[type="submit"]:active {
 }
 
 .stylesheet button:active {
-    box-shadow: inset 0px 3px 5px rgba(0,0,0,0.3);
+    box-shadow: inset 0px 3px 5px rgba(0, 0, 0, 0.3);
 }
 
 .stylesheet button:first-child {
