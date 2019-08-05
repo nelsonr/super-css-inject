@@ -108,4 +108,10 @@ window.addEventListener('load', () => {
             });
         }
     });
+
+    let buttons = document.querySelectorAll('[data-action="preferences"]');
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', () => browser.runtime.openOptionsPage());
+    });
 });
