@@ -22,6 +22,20 @@ function render(stylesheetsData, tabId) {
         message.classList.add('hidden');
     }
 
+    // sort stylesheets by name
+    stylesheetsData.sort((stylesheet_A, stylesheet_B) => {
+        let nameA = stylesheet_A.name.toLowerCase();
+        let nameB = stylesheet_B.name.toLowerCase();
+
+        if (nameA < nameB) {
+            return -1;
+        } else if (nameA > nameB) {
+            return 1;
+        }
+
+        return 0;
+    });
+
     stylesheetsData.forEach((stylesheet, index) => {
         let stylesheetContainer = document.createElement('div');
         stylesheetContainer.classList.add('stylesheet');
