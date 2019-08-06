@@ -34,6 +34,7 @@ window.addEventListener('load', () => {
 
 browser.runtime.onMessage.addListener((message) => {
     if (message.action == 'inject') {
+        clearStylesheets();
         injectStylesheets(message.stylesheetIndex);
     }
 
