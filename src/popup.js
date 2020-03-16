@@ -117,6 +117,15 @@ window.addEventListener('load', () => {
                 SuperCSSInject.tabs = {};
             }
 
+            SuperCSSInject.stylesheets = SuperCSSInject.stylesheets.map((stylesheet) => {
+                if (!stylesheet.name) {
+                    let urlParts = stylesheet.url.split('/');
+                    stylesheet.name = urlParts[urlParts.length - 1];
+                }
+
+                return stylesheet;
+            });
+
             browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
                 render(SuperCSSInject.stylesheets, tabs[0].id);
             });

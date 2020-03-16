@@ -129,6 +129,19 @@ window.addEventListener('load', () => {
         if (storage.SuperCSSInject !== undefined) {
             SuperCSSInject = storage.SuperCSSInject;
 
+            if (SuperCSSInject.tabs === undefined) {
+                SuperCSSInject.tabs = {};
+            }
+
+            SuperCSSInject.stylesheets = SuperCSSInject.stylesheets.map((stylesheet) => {
+                if (!stylesheet.name) {
+                    let urlParts = stylesheet.url.split('/');
+                    stylesheet.name = urlParts[urlParts.length - 1];
+                }
+
+                return stylesheet;
+            });
+
             render(SuperCSSInject.stylesheets);
         }
     });
