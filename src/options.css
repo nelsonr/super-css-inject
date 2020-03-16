@@ -1,16 +1,16 @@
 :root {
-    --primary-color: #F03738;
-    --primary-color-light: #F98484;
-    --primary-color-dark: #BC0303;
+    --primary-color: #f03738;
+    --primary-color-light: #f98484;
+    --primary-color-dark: #bc0303;
 
-    --green: #16C18E;
-    --green-shade-1: #14B082;
+    --green: #16c18e;
+    --green-shade-1: #14b082;
 
-    --red: #C13016;
+    --red: #c13016;
     --red-shade-1: #912511;
 
-    --gray: #D6D6D6;
-    --gray-shade-1: #B0B0B0;
+    --gray: #d6d6d6;
+    --gray-shade-1: #b0b0b0;
 }
 
 * {
@@ -21,7 +21,7 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #F1F1F1;
+    background-color: #f1f1f1;
     font-size: 16px;
     font-family: Roboto, system-ui, sans-serif;
     margin-top: 56px;
@@ -34,7 +34,7 @@ body {
 
 header {
     background-color: #424242;
-    color: #FFF;
+    color: #fff;
     padding: 10px;
     position: fixed;
     top: 0;
@@ -78,7 +78,7 @@ main {
 input {
     padding: 10px 12px;
     border-radius: 3px;
-    border: 1px solid #E4E4E4;
+    border: 1px solid #e4e4e4;
     font-size: 14px;
     font-weight: 300;
     height: 40px;
@@ -91,7 +91,7 @@ input:focus {
 
 input[type='submit'],
 button {
-    color: #FFF;
+    color: #fff;
     cursor: pointer;
     text-transform: uppercase;
     font-weight: bold;
@@ -152,7 +152,7 @@ input[type='submit']:active {
     height: 50px;
     padding: 10px;
     margin-top: 14px;
-    background-color: #FFF;
+    background-color: #fff;
     color: #222;
     font-size: 14px;
     font-weight: 300;
@@ -168,6 +168,11 @@ input[type='submit']:active {
     background-color: var(--green);
 }
 
+.stylesheet__url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .stylesheet__actions {
     display: flex;
     justify-content: space-between;
@@ -177,7 +182,7 @@ input[type='submit']:active {
     width: 30px;
     height: 30px;
     background-color: var(--gray);
-    color: #FFF;
+    color: #fff;
     border-radius: 2px;
     margin-left: 10px;
     position: relative;
@@ -234,7 +239,7 @@ input[type='submit']:active {
     transform: rotate(-45deg);
     width: 3px;
     height: 15px;
-    background-color: #FFF;
+    background-color: #fff;
 }
 
 .stylesheet__delete:before {
@@ -244,5 +249,5 @@ input[type='submit']:active {
     transform: rotate(45deg);
     width: 3px;
     height: 15px;
-    background-color: #FFF;
+    background-color: #fff;
 }

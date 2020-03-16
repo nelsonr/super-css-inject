@@ -160,6 +160,11 @@ header .title {
     background-color: var(--green);
 }
 
+.stylesheet__url {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .stylesheet__actions {
     display: flex;
     justify-content: space-between;

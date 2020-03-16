@@ -42,6 +42,7 @@ function render(stylesheetsData, tabId) {
 
         let stylesheetURL = document.createElement('div');
         stylesheetURL.classList.add('stylesheet__url');
+        stylesheetURL.setAttribute('title', stylesheet.name);
 
         stylesheetURL.innerText = stylesheet.name;
 
