@@ -3,6 +3,9 @@
 
 let browser = chrome || browser;
 let message = document.querySelector('.stylesheets-message');
+let searchEl = document.querySelector('.search');
+let searchInput = searchEl.querySelector('input[type="text"]');
+let searchInputClear = searchEl.querySelector('.icon-cross');
 
 let SuperCSSInject = {
     stylesheets: [],
@@ -12,6 +15,12 @@ let SuperCSSInject = {
 function render(stylesheetsData, tabId) {
     let documentFragment = document.createDocumentFragment();
     let stylesheetsList = document.querySelector('.stylesheets-list');
+    let showSearch = stylesheetsData.length > 8;
+
+    if (showSearch) {
+        searchEl.classList.remove('hidden');
+        searchInput.focus();
+    }
 
     if (stylesheetsData.length === 0) {
         message.classList.remove('hidden');
@@ -37,43 +46,59 @@ function render(stylesheetsData, tabId) {
     });
 
     stylesheetsData.forEach((stylesheet, index) => {
-        let stylesheetContainer = document.createElement('div');
-        stylesheetContainer.classList.add('stylesheet');
+        if (!stylesheet.hidden) {
+            let stylesheetContainer = document.createElement('div');
+            stylesheetContainer.classList.add('stylesheet');
 
-        let stylesheetURL = document.createElement('div');
-        stylesheetURL.classList.add('stylesheet__url');
-        stylesheetURL.setAttribute('title', stylesheet.name);
+            let stylesheetURL = document.createElement('div');
+            stylesheetURL.classList.add('stylesheet__url');
+            stylesheetURL.setAttribute('title', stylesheet.name);
 
-        stylesheetURL.innerText = stylesheet.name;
+            stylesheetURL.innerText = stylesheet.name;
 
-        let stylesheetActions = document.createElement('div');
-        stylesheetActions.classList.add('stylesheet__actions');
+            let stylesheetActions = document.createElement('div');
+            stylesheetActions.classList.add('stylesheet__actions');
 
-        let toggleBtn = document.createElement('button');
-        toggleBtn.classList.add('stylesheet__toggle');
+            let toggleBtn = document.createElement('button');
+            toggleBtn.classList.add('stylesheet__toggle');
 
-        stylesheetContainer.addEventListener('click', () => {
-            stylesheetContainer.classList.toggle('active');
-            toggleStylesheet(index, tabId);
-        });
+            stylesheetContainer.addEventListener('click', () => {
+                stylesheetContainer.classList.toggle('active');
+                toggleStylesheet(index, tabId);
+            });
 
-        stylesheetActions.appendChild(toggleBtn);
+            stylesheetActions.appendChild(toggleBtn);
 
-        if (index === getActiveStylesheet(tabId)) {
-            stylesheetContainer.classList.add('stylesheet--active');
+            if (index === getActiveStylesheet(tabId)) {
+                stylesheetContainer.classList.add('stylesheet--active');
+            }
+
+            stylesheetContainer.setAttribute('data-index', index);
+            stylesheetContainer.appendChild(stylesheetURL);
+            stylesheetContainer.appendChild(stylesheetActions);
+
+            documentFragment.appendChild(stylesheetContainer);
         }
-
-        stylesheetContainer.setAttribute('data-index', index);
-        stylesheetContainer.appendChild(stylesheetURL);
-        stylesheetContainer.appendChild(stylesheetActions);
-
-        documentFragment.appendChild(stylesheetContainer);
     });
 
     stylesheetsList.innerHTML = '';
     stylesheetsList.appendChild(documentFragment);
 
     return true;
+}
+
+function search(query, stylesheetsData) {
+    let queryRegex = new RegExp(query, 'gi');
+
+    return stylesheetsData.map((stylesheet) => {
+        if (query.length > 0 && !stylesheet.name.match(queryRegex)) {
+            stylesheet.hidden = true;
+        } else {
+            stylesheet.hidden = false;
+        }
+
+        return stylesheet;
+    });
 }
 
 function getActiveStylesheet(tabId) {
@@ -124,11 +149,28 @@ window.addEventListener('load', () => {
                     stylesheet.name = urlParts[urlParts.length - 1];
                 }
 
+                stylesheet.hidden = false;
+
                 return stylesheet;
             });
 
             browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
                 render(SuperCSSInject.stylesheets, tabs[0].id);
+
+                searchInput.addEventListener('input', (_) => {
+                    if (searchInput.value.length > 0) {
+                        searchInputClear.classList.remove('hidden');
+                    } else {
+                        searchInputClear.classList.add('hidden');
+                    }
+
+                    render(search(searchInput.value, SuperCSSInject.stylesheets), tabs[0].id);
+                });
+
+                searchInputClear.addEventListener('click', (_) => {
+                    searchInput.value = '';
+                    searchInput.dispatchEvent(new Event('input'));
+                });
             });
         }
     });

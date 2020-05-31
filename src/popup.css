@@ -11,6 +11,8 @@
   
   --gray: #D6D6D6;
   --gray-shade-1: #B0B0B0;
+  --gray-shade-2: #C9C9C9;
+  --gray-shade-3: #424242;
   
   --background: #F2F2F2;
 }
@@ -73,9 +75,70 @@ header .logo {
 }
 
 header .title {
-  font-size: 15px;
+  font-size: 14px;
   color: #131313;
+  margin: 0;
   margin-left: 10px;
+}
+
+.title-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 45px;
+}
+
+.search {
+  position: relative;
+  margin: 5px 10px;
+  width: 145px;
+}
+
+.search .icon-search {
+  width: 12px;
+  height: 12px;
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translate(-50%, -50%);
+}
+
+.search .icon-search path {
+  fill: var(--gray-shade-1);
+}
+
+.search .icon-cross {
+  width: 8px;
+  height: 8px;
+  padding: 4px;
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.search .icon-cross path {
+  fill: var(--gray-shade-1);
+}
+
+.search .icon-cross:hover path {
+  fill: var(--gray-shade-3);
+}
+
+.search input {
+  border-radius: 3px;
+  border: 1px solid var(--gray-shade-2);
+  padding: 4px 6px;
+  padding-left: 20px;
+  padding-right: 18px;
+  font-size: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.search input:focus {
+  outline: none;
 }
 
 .stylesheets-message {
@@ -135,7 +198,7 @@ header .title {
   align-items: center;
   height: 30px;
   padding: 10px;
-  margin-top: 10px;
+  margin-bottom: 10px;
   background-color: #FFF;
   color: #9D9D9D;
   font-family: 'Roboto Condensed', Roboto, sans-serif;
@@ -150,10 +213,6 @@ header .title {
 .stylesheet--active,
 .stylesheet:hover {
   color: #222;
-}
-
-.stylesheet:first-child {
-  margin-top: 0;
 }
 
 .stylesheet--active button.stylesheet__toggle {
