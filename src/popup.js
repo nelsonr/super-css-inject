@@ -64,12 +64,12 @@ function render(stylesheetsData, tabId) {
 
             stylesheetContainer.addEventListener('click', () => {
                 stylesheetContainer.classList.toggle('active');
-                toggleStylesheet(index, tabId);
+                toggleStylesheet(stylesheet.url, tabId);
             });
 
             stylesheetActions.appendChild(toggleBtn);
 
-            if (index === getActiveStylesheet(tabId)) {
+            if (getActiveStylesheets(tabId) && getActiveStylesheets(tabId).includes(stylesheet.url)) {
                 stylesheetContainer.classList.add('stylesheet--active');
             }
 
@@ -101,18 +101,30 @@ function search(query, stylesheetsData) {
     });
 }
 
-function getActiveStylesheet(tabId) {
+function getActiveStylesheets(tabId) {
     return SuperCSSInject.tabs[tabId];
 }
 
-function setActiveStylesheet(stylesheetIndex, tabId) {
-    SuperCSSInject.tabs[tabId] = stylesheetIndex;
+function setActiveStylesheet(url, tabId) {
+    if (!SuperCSSInject.tabs[tabId]) {
+        SuperCSSInject.tabs[tabId] = [];
+    }
+
+    SuperCSSInject.tabs[tabId].push(url);
     updateStorage(SuperCSSInject);
 }
 
-function clearActiveStylesheet(tabId) {
-    SuperCSSInject.tabs[tabId] = undefined;
-    delete SuperCSSInject.tabs[tabId];
+function clearActiveStylesheets(url, tabId) {
+    SuperCSSInject.tabs[tabId].forEach((stylesheetURL, index) => {
+        if (stylesheetURL === url) {
+            SuperCSSInject.tabs[tabId].splice(index, 1);
+        }
+    });
+
+    if (SuperCSSInject.tabs[tabId].length < 1) {
+        delete SuperCSSInject.tabs[tabId];
+    }
+
     updateStorage(SuperCSSInject);
 }
 
@@ -120,13 +132,13 @@ function updateStorage(data) {
     browser.storage.local.set({ SuperCSSInject: data });
 }
 
-function toggleStylesheet(stylesheetIndex, tabId) {
-    if (SuperCSSInject.tabs[tabId] === stylesheetIndex) {
-        clearActiveStylesheet(tabId);
-        browser.runtime.sendMessage({ action: 'clear', tabId: tabId });
+function toggleStylesheet(url, tabId) {
+    if (SuperCSSInject.tabs[tabId] && SuperCSSInject.tabs[tabId].includes(url)) {
+        clearActiveStylesheets(url, tabId);
+        browser.runtime.sendMessage({ action: 'clear', tabId: tabId, url: url });
     } else {
-        setActiveStylesheet(stylesheetIndex, tabId);
-        browser.runtime.sendMessage({ action: 'inject', tabId: tabId, stylesheetIndex: stylesheetIndex });
+        setActiveStylesheet(url, tabId);
+        browser.runtime.sendMessage({ action: 'inject', tabId: tabId, url: url });
     }
 
     render(SuperCSSInject.stylesheets, tabId);
@@ -157,7 +169,7 @@ window.addEventListener('load', () => {
             browser.tabs.query({ currentWindow: true, active: true }, (tabs) => {
                 render(SuperCSSInject.stylesheets, tabs[0].id);
 
-                searchInput.addEventListener('input', (_) => {
+                searchInput.addEventListener('input', () => {
                     if (searchInput.value.length > 0) {
                         searchInputClear.classList.remove('hidden');
                     } else {
@@ -167,7 +179,7 @@ window.addEventListener('load', () => {
                     render(search(searchInput.value, SuperCSSInject.stylesheets), tabs[0].id);
                 });
 
-                searchInputClear.addEventListener('click', (_) => {
+                searchInputClear.addEventListener('click', () => {
                     searchInput.value = '';
                     searchInput.dispatchEvent(new Event('input'));
                 });

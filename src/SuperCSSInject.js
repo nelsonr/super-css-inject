@@ -3,28 +3,26 @@
 
 let browser = chrome || browser;
 
-function injectStylesheets(stylesheetIndex) {
-    browser.storage.local.get(['SuperCSSInject'], (storage) => {
-        if (storage.SuperCSSInject) {
-            storage.SuperCSSInject.stylesheets.forEach((stylesheet, index) => {
-                if (index == stylesheetIndex) {
-                    var link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.type = 'text/css';
-                    link.href = stylesheet.url;
-                    link.classList.add('SuperCSSInject');
-                    document.head.appendChild(link);
-                }
-            });
-        }
+function injectStylesheets(urlList) {
+    urlList.forEach((url) => {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = url;
+        link.classList.add('SuperCSSInject');
+        document.head.appendChild(link);
     });
 }
 
-function clearStylesheets() {
+function clearStylesheets(url) {
     let links = document.querySelectorAll('link.SuperCSSInject');
 
     if (links.length > 0) {
-        links.forEach((link) => link.remove());
+        links.forEach((link) => {
+            if (link.href === url) {
+                link.remove();
+            }
+        });
     }
 }
 
@@ -34,11 +32,10 @@ window.addEventListener('load', () => {
 
 browser.runtime.onMessage.addListener((message) => {
     if (message.action == 'inject') {
-        clearStylesheets();
-        injectStylesheets(message.stylesheetIndex);
+        injectStylesheets(message.urlList);
     }
 
     if (message.action == 'clear') {
-        clearStylesheets();
+        clearStylesheets(message.url);
     }
 });
