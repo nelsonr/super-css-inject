@@ -53,7 +53,7 @@ function render(stylesheetsData) {
 
         let stylesheetURL = document.createElement('div');
         stylesheetURL.classList.add('stylesheet__url');
-        stylesheetURL.innerText = stylesheet.url;
+        stylesheetURL.innerHTML = `<a href="${stylesheet.url}" target="_blank">${stylesheet.url}</a>`;
 
         let stylesheetActions = document.createElement('div');
         stylesheetActions.classList.add('stylesheet__actions');

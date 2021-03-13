@@ -2,13 +2,13 @@
   --primary-color: #f03738;
   --primary-color-light: #f98484;
   --primary-color-dark: #bc0303;
-  
+
   --green: #16c18e;
   --green-shade-1: #14b082;
-  
+
   --red: #c13016;
   --red-shade-1: #912511;
-  
+
   --gray: #d6d6d6;
   --gray-shade-1: #b0b0b0;
 }
@@ -92,7 +92,7 @@ input:focus {
 
 input[type='submit'],
 button {
-  color: #fff;
+  color: #FFF;
   cursor: pointer;
   text-transform: uppercase;
   font-weight: bold;
@@ -172,6 +172,10 @@ input[type='submit']:active {
 .stylesheet__url {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.stylesheet__url a {
+  color: var(--primary-color);
 }
 
 .stylesheet__actions {
