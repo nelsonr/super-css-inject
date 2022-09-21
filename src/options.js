@@ -1,10 +1,11 @@
 // ESLint
 /* global chrome */
 
-let browser = chrome || browser;
-let isFirefox = /Firefox\/\d{1,2}/.test(navigator.userAgent);
-let form = document.querySelector('.stylesheets-form');
-let message = document.querySelector('.stylesheets-message');
+const browser = window.chrome || window.browser;
+const isFirefox = /Firefox\/\d{1,2}/.test(navigator.userAgent);
+const form = document.querySelector('.stylesheets-form');
+const message = document.querySelector('.stylesheets-message');
+const stylesheetsList = document.querySelector('.stylesheets-list');
 
 let SuperCSSInject = {
     stylesheets: [],
@@ -20,10 +21,20 @@ class Stylesheet {
     }
 }
 
-function render(stylesheetsData) {
-    let documentFragment = document.createDocumentFragment();
-    let stylesheetsList = document.querySelector('.stylesheets-list');
+const sortByName = (stylesSheetA, stylesSheetB) => {
+    const nameA = stylesSheetA.name.toLowerCase();
+    const nameB = stylesSheetB.name.toLowerCase();
 
+    if (nameA < nameB) {
+        return -1;
+    } else if (nameA > nameB) {
+        return 1;
+    }
+
+    return 0;
+};
+
+function render(stylesheetsData) {
     if (stylesheetsData.length === 0) {
         message.classList.remove('hidden');
         stylesheetsList.innerHTML = '';
@@ -33,70 +44,62 @@ function render(stylesheetsData) {
         message.classList.add('hidden');
     }
 
-    // sort stylesheets by name
-    stylesheetsData.sort((stylesheet_A, stylesheet_B) => {
-        let nameA = stylesheet_A.name.toLowerCase();
-        let nameB = stylesheet_B.name.toLowerCase();
+    stylesheetsData.sort(sortByName);
 
-        if (nameA < nameB) {
-            return -1;
-        } else if (nameA > nameB) {
-            return 1;
-        }
+    const stylesheetsHTML = stylesheetsData.map((item, index) =>
+        renderStylesheet(item, index)
+    );
 
-        return 0;
-    });
-
-    stylesheetsData.forEach((stylesheet, index) => {
-        let stylesheetContainer = document.createElement('div');
-        stylesheetContainer.classList.add('stylesheet');
-
-        let stylesheetURL = document.createElement('div');
-        stylesheetURL.classList.add('stylesheet__url');
-        stylesheetURL.innerHTML = `<a href="${stylesheet.url}" target="_blank">${stylesheet.url}</a>`;
-
-        let stylesheetActions = document.createElement('div');
-        stylesheetActions.classList.add('stylesheet__actions');
-
-        let deleteBtn = document.createElement('button');
-        deleteBtn.classList.add('stylesheet__delete');
-
-        deleteBtn.addEventListener('click', (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            removeStylesheet(index);
-        });
-
-        stylesheetActions.appendChild(deleteBtn);
-
-        stylesheetContainer.setAttribute('data-index', index);
-        stylesheetContainer.appendChild(stylesheetURL);
-        stylesheetContainer.appendChild(stylesheetActions);
-
-        documentFragment.appendChild(stylesheetContainer);
-    });
-
-    stylesheetsList.innerHTML = '';
-    stylesheetsList.appendChild(documentFragment);
+    stylesheetsList.innerHTML = stylesheetsHTML.join('');
+    setupStylesheetListeners();
 
     return true;
 }
 
-function updateStorage(data) {
-    browser.storage.local.set({ SuperCSSInject: data }, () => {
-        // console.log('storage updated: ', data);
+function setupStylesheetListeners() {
+    const stylesheets = stylesheetsList.querySelectorAll('.stylesheet');
+
+    stylesheets.forEach((item, index) => {
+        const removeButton = item.querySelector('.stylesheet__delete');
+
+        if (removeButton) {
+            removeButton.addEventListener('click', (ev) => {
+                ev.preventDefault();
+                ev.stopPropagation();
+                removeStylesheet(index);
+            });
+        }
     });
 }
 
-function addStylesheet(stylesheetURL) {
-    let urlList = SuperCSSInject.stylesheets.map((stylesheet) => stylesheet.url);
+function renderStylesheet(stylesheet, index) {
+    return `
+        <div class="stylesheet" data-index="${index}">
+            <div class="stylesheet__url">
+                <a href="${stylesheet.url}" target="_blank">${stylesheet.url}</a>
+            </div>
+            <div class="stylesheet__actions">
+                <button class="stylesheet__delete"></button>
+            </div>
+        </div>
+    `;
+}
 
-    if (urlList.indexOf(stylesheetURL) !== -1) {
+function updateStorage(data) {
+    browser.storage.local.set({ SuperCSSInject: data }, () => {
+        console.log('storage updated: ', data);
+    });
+}
+
+function addStylesheet(stylesSheetURL) {
+    let urlList = SuperCSSInject.stylesheets.map((stylesSheet) => stylesSheet.url);
+
+    if (urlList.indexOf(stylesSheetURL) !== -1) {
         return false;
     }
 
-    let stylesheet = new Stylesheet(stylesheetURL);
-    SuperCSSInject.stylesheets.push(stylesheet);
+    let stylesSheet = new Stylesheet(stylesSheetURL);
+    SuperCSSInject.stylesheets.push(stylesSheet);
 
     updateStorage(SuperCSSInject);
     render(SuperCSSInject.stylesheets);
@@ -104,9 +107,9 @@ function addStylesheet(stylesheetURL) {
     return true;
 }
 
-function removeStylesheet(stylesheetIndex) {
+function removeStylesheet(stylesSheetIndex) {
     SuperCSSInject.stylesheets = SuperCSSInject.stylesheets.filter((_, index) => {
-        return index !== stylesheetIndex;
+        return index !== stylesSheetIndex;
     });
 
     updateStorage(SuperCSSInject);
@@ -133,13 +136,13 @@ window.addEventListener('load', () => {
                 SuperCSSInject.tabs = {};
             }
 
-            SuperCSSInject.stylesheets = SuperCSSInject.stylesheets.map((stylesheet) => {
-                if (!stylesheet.name) {
-                    let urlParts = stylesheet.url.split('/');
-                    stylesheet.name = urlParts[urlParts.length - 1];
+            SuperCSSInject.stylesheets = SuperCSSInject.stylesheets.map((stylesSheet) => {
+                if (!stylesSheet.name) {
+                    let urlParts = stylesSheet.url.split('/');
+                    stylesSheet.name = urlParts[urlParts.length - 1];
                 }
 
-                return stylesheet;
+                return stylesSheet;
             });
 
             render(SuperCSSInject.stylesheets);
@@ -149,12 +152,12 @@ window.addEventListener('load', () => {
 
 form.addEventListener('submit', (ev) => {
     ev.preventDefault();
-    let styleSheetField = form.querySelector('input');
+    let stylesSheetField = form.querySelector('input');
 
-    if (styleSheetField.value === '') {
+    if (stylesSheetField.value === '') {
         return false;
     }
 
-    addStylesheet(styleSheetField.value);
-    styleSheetField.value = '';
+    addStylesheet(stylesSheetField.value);
+    stylesSheetField.value = '';
 });
