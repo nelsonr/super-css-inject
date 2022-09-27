@@ -1,53 +1,91 @@
-// ESLint
-/* global chrome */
-
-import { Stylesheet } from "../Stylesheet";
+import { useState, useEffect, useReducer, useRef } from "react";
+import { reducer } from "../reducer";
+import { loadStorage } from "../storage";
 import { SuperCSSInject } from "../types";
+import { getCurrentTab } from "../utils";
+import { StylesheetList } from "./StylesheetList";
 
 const env = chrome || browser;
 
-const SuperCSSInject: SuperCSSInject = {
+const initialState: SuperCSSInject = {
     stylesheets: [],
     tabs: {}
 };
 
 function Popup() {
-    return (
-        <div></div>
-    );
-}
+    const firstRender = useRef(true);
+    const [state, setState] = useReducer(reducer, initialState);
+    const [activeTabId, setActiveTabId] = useState<number>();
 
-interface StylesheetItemProps {
-    stylesheet: Stylesheet;
-    active: boolean;
-    onActiveToggle: (active: boolean) => unknown;
-}
+    useEffect(() => {
+        if (firstRender.current) {
+            console.log("Load from local storage");
+            
+            const fetchData = async () => {
+                const data: SuperCSSInject = await loadStorage();
+                setState({ 
+                    type: "updateState",
+                    state: data, 
+                    persist: false 
+                });
+            };
+    
+            fetchData().catch(console.error);
 
-function StylesheetItem (props: StylesheetItemProps) {
-    const { stylesheet, active, onActiveToggle } = props;
+            getCurrentTab().then(
+                (tab) => setActiveTabId(tab.id), 
+                (error) => console.error(error)
+            );
+            
+            firstRender.current = false;
+        }
+    }, []);
 
-    const handleStatusChange = () => onActiveToggle(!active);
+    const activeStylesheets = () => {
+        if (activeTabId !== undefined && state.tabs[activeTabId]) {
+            return state.tabs[activeTabId];
+        }
 
-    const className = [
-        "stylesheet",
-        (active ? "stylesheet--active" : "")
-    ].join(" ").trim();
+        return [];
+    };
+
+    const handleSelection = (isActive: boolean, id: number) => {
+        console.log("Toggle active Stylesheet");
+        
+        setState({
+            type: isActive ? "setActive" : "clearActive",
+            id: id,
+            tabId: activeTabId as number,
+            persist: true
+        });
+
+        const url = state.stylesheets[id].url;
+
+        if (isActive) {
+            env.runtime.sendMessage({ action: "inject", tabId: activeTabId, url: url }).then(
+                () => console.log("INJECT"),
+                (error) => console.error(error)
+            );
+        } else {
+            env.runtime.sendMessage({ action: "clear", tabId: activeTabId, url: url }).then(
+                () => console.log("CLEAR"),
+                (error) => console.error(error)
+            );
+        }
+    };
     
     return (
-        <div className={className} data-index="0">
-            <div className="stylesheet__url" title={stylesheet.name}>{stylesheet.name}</div>
-            <div className="stylesheet__actions">
-                <button className="stylesheet__toggle" onClick={handleStatusChange}></button>
-            </div>
+        <div>
+            <PopupPreferences />
+            <PopupHeader />
+            <StylesheetList 
+                list={state.stylesheets} 
+                activeList={activeStylesheets()} 
+                onSelectionChange={handleSelection} 
+                search={""} 
+            />
         </div>
     );
-}
-
-function StylesheetList (props: StylesheetItemProps) {
-    return (
-        <div className="stylesheets-list">
-        </div>
-    ); 
 }
 
 function PopupHeader() {
@@ -75,6 +113,18 @@ function PopupHeader() {
             </div>
         </header>
     ); 
+}
+
+function PopupPreferences() {
+    const openOptionsPage = () => env.runtime.openOptionsPage();
+    
+    return (
+        <div className="preferences" data-action="preferences" title="Options" onClick={openOptionsPage}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="212 11.001 16 15.999" width="16pt" height="15.999pt">
+                <path d=" M 227.789 13.868 L 227.612 13.332 L 224.786 16.158 L 223.398 15.602 L 222.843 14.215 L 225.669 11.389 L 225.133 11.212 C 224.711 11.073 224.27 11.001 223.826 11.001 C 221.525 11.001 219.652 12.873 219.652 15.175 C 219.652 15.689 219.746 16.192 219.933 16.673 L 212.496 24.11 C 212.176 24.429 212 24.855 212 25.307 C 212 25.76 212.176 26.185 212.496 26.505 C 212.826 26.835 213.26 27 213.694 27 C 214.127 27 214.561 26.835 214.891 26.505 L 222.328 19.068 C 222.808 19.254 223.312 19.349 223.826 19.349 C 226.128 19.349 228 17.476 228 15.175 C 228 14.733 227.929 14.294 227.789 13.868 Z " />
+            </svg>
+        </div>
+    );
 }
 
 export default Popup;

@@ -15,3 +15,12 @@ export const sortByName = (
 
     return 0;
 };
+
+export async function getCurrentTab() {
+    const env = chrome || browser;
+    const queryOptions = { active: true, lastFocusedWindow: true };
+    // `tab` will either be a `tabs.Tab` instance or `undefined`.
+    const [tab] = await env.tabs.query(queryOptions);
+
+    return tab;
+}

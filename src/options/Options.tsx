@@ -1,9 +1,9 @@
 import { useEffect, useReducer, useRef } from "react";
 import { StylesheetForm } from "./StylesheetForm";
 import { StylesheetList } from "./StylesheetList";
-import { loadStorage, updateStorage } from "../storage";
+import { loadStorage } from "../storage";
 import { SuperCSSInject } from "../types";
-import { reducer, ActionType } from "./reducer";
+import { reducer } from "../reducer";
 
 const initialState: SuperCSSInject = {
     stylesheets: [],
@@ -11,36 +11,41 @@ const initialState: SuperCSSInject = {
 };
 
 function Options() {
-    const firstRender = useRef(false);
-    const [state, updateState] = useReducer(reducer, initialState);
+    const firstRender = useRef(true);
+    const [state, setState] = useReducer(reducer, initialState);
 
     useEffect(() => {
-        if (!firstRender.current) {
+        if (firstRender.current) {
             console.log("Load from local storage");
             
             const fetchData = async () => {
                 const data: SuperCSSInject = await loadStorage();
-                updateState({ type: ActionType.UpdateState, value: data });
+                setState({ 
+                    type: "updateState", 
+                    state: data, 
+                    persist: false 
+                });
             };
     
-            firstRender.current = true; 
             fetchData().catch(console.error);
+            firstRender.current = false;
         }
     }, []);
 
-    // Update local storage whenever theres a change on the state variable
-    useEffect(() => {
-        if (firstRender.current) {
-            updateStorage(state);
-        }
-    }, [state]);
-    
     const addStylesheet = (url: string) => {
-        updateState({ type: ActionType.Add, value: url });
+        setState({ 
+            type: "add",
+            url: url, 
+            persist: true 
+        });
     };
 
     const removeStylesheet = (id: number) => {
-        updateState({ type: ActionType.Remove, value: id });
+        setState({ 
+            type: "remove",
+            id: id, 
+            persist: true 
+        });
     };
     
     return (
