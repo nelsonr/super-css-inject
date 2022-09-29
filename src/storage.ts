@@ -1,9 +1,8 @@
 import { Stylesheet } from "./Stylesheet";
 import { SuperCSSInject } from "./types";
-import { sortByName } from "./utils";
+import { env, sortByName } from "./utils";
 
 export async function loadStorage(): Promise<SuperCSSInject> {
-    const env = chrome || browser;
     const state: SuperCSSInject = {
         stylesheets: [],
         tabs: {},
@@ -36,8 +35,6 @@ export async function loadStorage(): Promise<SuperCSSInject> {
 }
 
 export function updateStorage(data: SuperCSSInject) {
-    const env = chrome || browser;
-
     env.storage.local.set({ SuperCSSInject: data }).then(
         () => console.log("Local storage updated!", data),
         (error) => console.error(error)

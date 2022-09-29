@@ -1,7 +1,7 @@
 import { Tabs } from "../types";
+import { env } from "../utils";
 
 const activeTabs: Tabs = {};
-const env = chrome || browser;
 
 function getActiveStylesheetsCount(tabId: number) {
     if (activeTabs[tabId]) {
