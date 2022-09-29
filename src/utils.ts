@@ -1,5 +1,7 @@
 import { Stylesheet } from "./Stylesheet";
 
+export const env = chrome || browser;
+
 export const sortByName = (
     stylesSheetA: Stylesheet,
     stylesSheetB: Stylesheet
@@ -16,9 +18,9 @@ export const sortByName = (
     return 0;
 };
 
-export async function getCurrentTab() {
-    const env = chrome || browser;
+export async function getCurrentTab(): Promise<chrome.tabs.Tab | undefined> {
     const queryOptions = { active: true, lastFocusedWindow: true };
+    
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
     const [tab] = await env.tabs.query(queryOptions);
 
