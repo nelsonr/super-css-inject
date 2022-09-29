@@ -74,6 +74,9 @@ function setActive(
     const tabs = { ...state.tabs };
     const url = state.stylesheets[id].url;
 
+    // Avoid undefined tab id in runtime
+    if (!tabId) return state;
+
     if (!tabs[tabId]) {
         tabs[tabId] = [url];
     } else {
@@ -100,6 +103,9 @@ function clearActive(
 ): State {
     const tabs = { ...state.tabs };
     const url = state.stylesheets[id].url;
+
+    // Avoid undefined tab id in runtime
+    if (!tabId) return state;
 
     if (tabs[tabId]) {
         const index = tabs[tabId].indexOf(url);
