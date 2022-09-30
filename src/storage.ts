@@ -28,6 +28,10 @@ export async function loadStorage(): Promise<SuperCSSInject> {
 
         if (tabs !== undefined) {
             state.tabs = tabs;
+
+            if (state.stylesheets.length === 0) {
+                state.tabs = {};
+            }
         }
     }
 
