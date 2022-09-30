@@ -1,21 +1,16 @@
-// ESLint
-/* global chrome */
-
-let browser = chrome || browser;
-
 function injectStylesheets(urlList) {
     urlList.forEach((url) => {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.type = 'text/css';
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.type = "text/css";
         link.href = url;
-        link.classList.add('SuperCSSInject');
+        link.classList.add("SuperCSSInject");
         document.head.appendChild(link);
     });
 }
 
 function clearStylesheets(url) {
-    let links = document.querySelectorAll('link.SuperCSSInject');
+    let links = document.querySelectorAll("link.SuperCSSInject");
 
     if (links.length > 0) {
         links.forEach((link) => {
@@ -26,16 +21,20 @@ function clearStylesheets(url) {
     }
 }
 
-window.addEventListener('load', () => {
-    browser.runtime.sendMessage({ action: 'pageLoad' });
-});
+function main() {
+    const env = window.chrome || window.browser;
 
-browser.runtime.onMessage.addListener((message) => {
-    if (message.action == 'inject') {
-        injectStylesheets(message.urlList);
-    }
+    env.runtime.sendMessage({ action: "pageLoad" });
 
-    if (message.action == 'clear') {
-        clearStylesheets(message.url);
-    }
-});
+    env.runtime.onMessage.addListener((message) => {
+        if (message.action == "inject") {
+            injectStylesheets(message.urlList);
+        }
+
+        if (message.action == "clear") {
+            clearStylesheets(message.url);
+        }
+    });
+}
+
+window.addEventListener("load", main);
