@@ -1,4 +1,4 @@
-import { Tabs } from "../types";
+import { TabId, Tabs } from "../types";
 import { env } from "../utils";
 
 const activeTabs: Tabs = {};
@@ -12,8 +12,12 @@ function getActiveStylesheetsCount(tabId: number) {
 }
 
 env.runtime.onMessage.addListener((message, sender) => {
-    const tabId: number = message.tabId || sender.tab?.id;
+    const tabId: TabId = message.tabId || sender.tab?.id;
 
+    if (tabId === undefined) {
+        return false;
+    }
+    
     if (message.action === "pageLoad" && activeTabs[tabId]) {
         env.action.setBadgeText({
             text: getActiveStylesheetsCount(tabId),
