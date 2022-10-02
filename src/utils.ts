@@ -2,10 +2,7 @@ import { Stylesheet } from "./Stylesheet";
 
 export const env = chrome || browser;
 
-export const sortByName = (
-    stylesSheetA: Stylesheet,
-    stylesSheetB: Stylesheet
-) => {
+export function sortByName (stylesSheetA: Stylesheet, stylesSheetB: Stylesheet) {
     const nameA = stylesSheetA.name.toLowerCase();
     const nameB = stylesSheetB.name.toLowerCase();
 
@@ -16,7 +13,7 @@ export const sortByName = (
     }
 
     return 0;
-};
+}
 
 export async function getCurrentTab (): Promise<chrome.tabs.Tab | undefined> {
     const queryOptions = { active: true, lastFocusedWindow: true };
@@ -39,4 +36,8 @@ export function toggleActiveStylesheet (isActive: boolean, activeTabId: number, 
             (error) => console.error(error)
         );
     }
+}
+
+export function setCSSClasses (classes: string[]): string {
+    return classes.join(" ").trim();
 }
