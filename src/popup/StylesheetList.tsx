@@ -9,13 +9,25 @@ interface IProps {
 }
 
 export function StylesheetList (props: IProps) {
-    const { list, onSelectionChange, activeList } = props;
+    const { list, activeList, search, onSelectionChange } = props;
 
+    const searchIsEmpty = search.trim().length === 0;
+    const searchRegex = new RegExp(search.trim(), "gi");
+    
     const stylesheets = list.map((stylesheet: Stylesheet, index: number) => {
         const handleActiveChange = (isActive: boolean) => onSelectionChange(isActive, index);
-        const isActive: boolean = activeList.find((url: string) => url === stylesheet.url) !== undefined;
+        const isActive = activeList.find((url: string) => url === stylesheet.url) !== undefined;
+        const isHidden = !searchIsEmpty && stylesheet.name.match(searchRegex) === null;
         
-        return <StylesheetItem key={index} stylesheet={stylesheet} active={isActive} onActiveToggle={handleActiveChange} />;
+        return (
+            <StylesheetItem 
+                key={index} 
+                stylesheet={stylesheet} 
+                active={isActive} 
+                hidden={isHidden}
+                onActiveToggle={handleActiveChange} 
+            />
+        );
     });
     
     return (

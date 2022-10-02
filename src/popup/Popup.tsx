@@ -2,10 +2,11 @@ import { useState, useEffect, useReducer, useRef } from "react";
 import { reducer } from "../reducer";
 import { loadStorage } from "../storage";
 import { SuperCSSInject } from "../types";
-import { env, getCurrentTab } from "../utils";
+import { getCurrentTab, toggleActiveStylesheet } from "../utils";
 import { PopupEmptyMessage } from "./PopupEmptyMessage";
 import { PopupHeader } from "./PopupHeader";
 import { PopupPreferences } from "./PopupPreferences";
+import { PopupSearch } from "./PopupSearch";
 import { StylesheetList } from "./StylesheetList";
 
 const initialState: SuperCSSInject = {
@@ -17,6 +18,7 @@ function Popup() {
     const firstRender = useRef(true);
     const [state, setState] = useReducer(reducer, initialState);
     const [activeTabId, setActiveTabId] = useState<number>();
+    const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
         if (firstRender.current) {
@@ -51,48 +53,50 @@ function Popup() {
     };
 
     const handleSelection = (isActive: boolean, id: number) => {
+        // Avoid undefined tab id in runtime
+        if (!activeTabId) return;
+        
         console.log("Toggle active Stylesheet");
         
         setState({
             type: isActive ? "setActive" : "clearActive",
             id: id,
-            tabId: activeTabId as number,
+            tabId: activeTabId,
             persist: true
         });
 
         const url = state.stylesheets[id].url;
-
-        if (isActive) {
-            env.runtime.sendMessage({ action: "inject", tabId: activeTabId, url: url }).then(
-                () => console.log("INJECT"),
-                (error) => console.error(error)
-            );
-        } else {
-            env.runtime.sendMessage({ action: "clear", tabId: activeTabId, url: url }).then(
-                () => console.log("CLEAR"),
-                (error) => console.error(error)
-            );
-        }
+        toggleActiveStylesheet(isActive, activeTabId, url);
     };
 
-    let content = <PopupEmptyMessage />;
+    let stylesheetsListContent = <PopupEmptyMessage />;
 
     if (state.stylesheets.length > 0) {
-        content = (
+        stylesheetsListContent = (
             <StylesheetList 
                 list={state.stylesheets} 
                 activeList={activeStylesheets()} 
                 onSelectionChange={handleSelection} 
-                search={""} 
+                search={searchValue} 
             />
         );
+    }
+
+    let searchContent = null;
+
+    if (state.stylesheets.length >= 6) {
+        searchContent = <PopupSearch search={searchValue} onChange={setSearchValue} />;
     }
 
     return (
         <>
             <PopupPreferences />
-            <PopupHeader />
-            {content}
+            
+            <PopupHeader>
+                {searchContent}
+            </PopupHeader>
+            
+            {stylesheetsListContent}
         </>
     );
 }

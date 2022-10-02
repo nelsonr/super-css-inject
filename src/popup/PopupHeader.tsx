@@ -1,6 +1,10 @@
-import { PopupSearch } from "./PopupSearch";
+interface IProps {
+    children: JSX.Element | JSX.Element[] | null;
+}
 
-export function PopupHeader () {
+export function PopupHeader (props: IProps) {
+    const { children } = props;
+    
     return (
         <header>
             <div className="column">
@@ -10,7 +14,7 @@ export function PopupHeader () {
 
                 <div className="title-wrapper">
                     <h3 className="title">Super CSS Inject</h3>
-                    <PopupSearch />
+                    {children}
                 </div>
             </div>
         </header>
