@@ -3,9 +3,9 @@ import { StylesheetItem } from "./StylesheetItem";
 
 interface IProps {
     list: Stylesheet[];
-    activeList: string[];
+    activeList: Set<string>;
     search: string;
-    onSelectionChange: (isActive: boolean, id: number) => unknown;
+    onSelectionChange: (isActive: boolean, url: string) => unknown;
 }
 
 export function StylesheetList (props: IProps) {
@@ -15,16 +15,19 @@ export function StylesheetList (props: IProps) {
     const searchRegex = new RegExp(search.trim(), "gi");
     
     const stylesheets = list.map((stylesheet: Stylesheet, index: number) => {
-        const handleActiveChange = (isActive: boolean) => onSelectionChange(isActive, index);
-        const isActive = activeList.find((url: string) => url === stylesheet.url) !== undefined;
-        const isHidden = !searchIsEmpty && stylesheet.name.match(searchRegex) === null;
+        const isActive = activeList.has(stylesheet.url);
+        const isFiltered = !searchIsEmpty && stylesheet.name.match(searchRegex) === null;
         
+        const handleActiveChange = (isActive: boolean) => {
+            return onSelectionChange(isActive, stylesheet.url);
+        };
+
         return (
             <StylesheetItem 
                 key={index} 
                 stylesheet={stylesheet} 
                 active={isActive} 
-                hidden={isHidden}
+                hidden={isFiltered}
                 onActiveToggle={handleActiveChange} 
             />
         );

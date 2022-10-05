@@ -1,4 +1,4 @@
-import { SuperCSSInject } from "./types";
+import { SuperCSSInject, Tabs } from "./types";
 import { Stylesheet } from "./Stylesheet";
 import { updateStorage } from "./storage";
 
@@ -6,10 +6,11 @@ type State = SuperCSSInject;
 
 type Action =
     | { type: "add"; url: string; persist: boolean }
-    | { type: "remove"; id: number; persist: boolean }
-    | { type: "setActive"; id: number; tabId: number; persist: boolean }
-    | { type: "clearActive"; id: number; tabId: number; persist: boolean }
-    | { type: "updateState"; state: State; persist: boolean };
+    | { type: "remove"; url: string; persist: boolean }
+    | { type: "setActive"; url: string; tabId: number; }
+    | { type: "setInactive"; url: string; tabId: number; }
+    | { type: "updateStylesheets"; stylesheets: Stylesheet[] }
+    | { type: "updateTabs"; tabs: Tabs };
 
 export function reducer(state: State, action: Action): State {
     switch (action.type) {
@@ -17,16 +18,19 @@ export function reducer(state: State, action: Action): State {
         return add(state, action.url, action.persist);
 
     case "remove":
-        return remove(state, action.id, action.persist);
+        return remove(state, action.url, action.persist);
+
+    case "updateStylesheets":
+        return updateStylesheets(state, action.stylesheets);
+
+    case "updateTabs":
+        return updateTabs(state, action.tabs);
 
     case "setActive":
-        return setActive(state, action.id, action.tabId, action.persist);
+        return setActive(state, action.url, action.tabId);
 
-    case "clearActive":
-        return clearActive(state, action.id, action.tabId, action.persist);
-
-    case "updateState":
-        return updateState(state, action.state, action.persist);
+    case "setInactive":
+        return setInactive(state, action.url, action.tabId);
 
     default:
         return state;
@@ -34,8 +38,12 @@ export function reducer(state: State, action: Action): State {
 }
 
 function add(state: State, url: string, persist: boolean): State {
-    const stylesheet = new Stylesheet(url);
+    const urlExists = state.stylesheets.find((item) => item.url === url);
 
+    // Exit early if URL already exists
+    if (urlExists) return state;
+    
+    const stylesheet = new Stylesheet(url);
     const updatedState = {
         ...state,
         stylesheets: [...state.stylesheets, stylesheet],
@@ -48,15 +56,9 @@ function add(state: State, url: string, persist: boolean): State {
     return updatedState;
 }
 
-function remove(state: State, id: number, persist: boolean): State {
-    const stylesheets = state.stylesheets.filter(
-        (_item, index) => index !== id
-    );
-
-    const updatedState = {
-        ...state,
-        stylesheets: stylesheets,
-    };
+function remove(state: State, url: string, persist: boolean): State {
+    const stylesheets = state.stylesheets.filter((stylesheet) => stylesheet.url !== url);
+    const updatedState = { ...state, stylesheets };
 
     if (persist) {
         updateStorage(updatedState);
@@ -65,75 +67,36 @@ function remove(state: State, id: number, persist: boolean): State {
     return updatedState;
 }
 
-function setActive(
-    state: State,
-    id: number,
-    tabId: number,
-    persist: boolean
-): State {
-    const tabs = { ...state.tabs };
-    const url = state.stylesheets[id].url;
+function updateStylesheets(state: State, stylesheets: Stylesheet[]): State {
+    return { ...state, stylesheets };
+}
 
-    // Avoid undefined tab id in runtime
-    if (!tabId) return state;
+function updateTabs(state: State, tabs: Tabs): State {
+    return { ...state, tabs };
+}
+
+function setActive(state: State, url: string, tabId: number): State {
+    const { tabs } = state;
 
     if (!tabs[tabId]) {
-        tabs[tabId] = [url];
-    } else {
-        tabs[tabId].push(url);
+        tabs[tabId] = new Set(url);
+    } else if (!tabs[tabId].has(url)) {
+        tabs[tabId].add(url);
     }
 
-    const updatedState = {
-        ...state,
-        tabs: { ...tabs },
-    };
-
-    if (persist) {
-        updateStorage(updatedState);
-    }
-
-    return updatedState;
+    return { ...state, tabs };
 }
 
-function clearActive(
-    state: State,
-    id: number,
-    tabId: number,
-    persist: boolean
-): State {
-    const tabs = { ...state.tabs };
-    const url = state.stylesheets[id].url;
-
-    // Avoid undefined tab id in runtime
-    if (!tabId) return state;
-
+function setInactive(state: State, url: string, tabId: number): State {
+    const { tabs } = state;
+    
     if (tabs[tabId]) {
-        const index = tabs[tabId].indexOf(url);
-        tabs[tabId].splice(index, 1);
-
-        if (tabs[tabId].length < 1) {
+        tabs[tabId].delete(url);
+        
+        if (tabs[tabId].size === 0) {
             delete tabs[tabId];
         }
     }
-
-    const updatedState = {
-        ...state,
-        tabs: { ...tabs },
-    };
-
-    if (persist) {
-        updateStorage(updatedState);
-    }
-
-    return updatedState;
-}
-
-function updateState(state: State, newState: State, persist: boolean): State {
-    const updatedState = { ...state, ...newState };
-
-    if (persist) {
-        updateStorage(newState);
-    }
-
-    return updatedState;
+    
+    return { ...state, tabs };
 }

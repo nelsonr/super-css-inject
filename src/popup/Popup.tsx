@@ -1,12 +1,12 @@
 import { useState, useEffect, useReducer, useRef } from "react";
 import { reducer } from "../reducer";
 import { loadStorage } from "../storage";
-import { SuperCSSInject } from "../types";
-import { getCurrentTab, toggleActiveStylesheet } from "../utils";
-import { PopupEmptyMessage } from "./PopupEmptyMessage";
+import { SuperCSSInject, Tab, TabId, Tabs } from "../types";
+import { getTabs, getCurrentTab, toggleActiveStylesheet } from "../utils";
 import { PopupHeader } from "./PopupHeader";
 import { PopupPreferences } from "./PopupPreferences";
 import { PopupSearch } from "./PopupSearch";
+import { PopupEmptyMessage } from "./PopupEmptyMessage";
 import { StylesheetList } from "./StylesheetList";
 
 const initialState: SuperCSSInject = {
@@ -17,7 +17,7 @@ const initialState: SuperCSSInject = {
 function Popup() {
     const firstRender = useRef(true);
     const [state, setState] = useReducer(reducer, initialState);
-    const [activeTabId, setActiveTabId] = useState<number>();
+    const [currentTabId, setCurrentTabId] = useState<TabId>();
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
@@ -27,46 +27,52 @@ function Popup() {
             loadStorage().then(
                 (data: SuperCSSInject) => { 
                     setState({ 
-                        type: "updateState", 
-                        state: data, 
-                        persist: false 
+                        type: "updateStylesheets", 
+                        stylesheets: data.stylesheets, 
                     }); 
+                },
+                (error) => console.error(error)
+            );
+                    
+            getTabs().then(
+                (tabs: Tabs) => {
+                    setState({ 
+                        type: "updateTabs", 
+                        tabs: tabs 
+                    });
                 },
                 (error) => console.error(error)
             );
 
             getCurrentTab().then(
-                (tab) => tab && setActiveTabId(tab.id), 
+                (tab: Tab) => tab && setCurrentTabId(tab.id), 
                 (error) => console.error(error)
             );
-            
+        
             firstRender.current = false;
         }
     }, []);
 
-    const activeStylesheets = () => {
-        if (activeTabId !== undefined && state.tabs[activeTabId]) {
-            return state.tabs[activeTabId];
+    const activeStylesheets = (): Set<string> => {
+        if (state.tabs && currentTabId && state.tabs[currentTabId]) {
+            return state.tabs[currentTabId];
         }
 
-        return [];
+        return new Set();
     };
 
-    const handleSelection = (isActive: boolean, id: number) => {
-        // Avoid undefined tab id in runtime
-        if (!activeTabId) return;
+    const handleSelection = (isActive: boolean, url: string) => {
+        if (currentTabId) {
+            console.log("Toggle active Stylesheet");
         
-        console.log("Toggle active Stylesheet");
-        
-        setState({
-            type: isActive ? "setActive" : "clearActive",
-            id: id,
-            tabId: activeTabId,
-            persist: true
-        });
+            setState({
+                type: isActive ? "setActive" : "setInactive",
+                url: url,
+                tabId: currentTabId,
+            });
 
-        const url = state.stylesheets[id].url;
-        toggleActiveStylesheet(isActive, activeTabId, url);
+            toggleActiveStylesheet(currentTabId, isActive, url);
+        }
     };
 
     let stylesheetsListContent = <PopupEmptyMessage />;
@@ -82,23 +88,32 @@ function Popup() {
         );
     }
 
-    let searchContent = null;
+    const renderSearch = () => {
+        const showSearch = state.stylesheets.length >= 6;
 
-    if (state.stylesheets.length >= 6) {
-        searchContent = <PopupSearch search={searchValue} onChange={setSearchValue} />;
-    }
+        if (showSearch) {
+            return (
+                <PopupSearch
+                    search={searchValue}
+                    onChange={setSearchValue} />
+            );
+        }
+        
+        return null;
+    };
 
     return (
         <>
             <PopupPreferences />
             
             <PopupHeader>
-                {searchContent}
+                {renderSearch()}
             </PopupHeader>
             
             {stylesheetsListContent}
         </>
     );
+
 }
 
 export default Popup;

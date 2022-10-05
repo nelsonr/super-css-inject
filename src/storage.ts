@@ -11,7 +11,7 @@ export async function loadStorage(): Promise<SuperCSSInject> {
     const storage = await env.storage.local.get("SuperCSSInject");
 
     if (storage.SuperCSSInject !== undefined) {
-        const { stylesheets, tabs } = storage.SuperCSSInject;
+        const { stylesheets } = storage.SuperCSSInject;
 
         if (stylesheets !== undefined) {
             state.stylesheets = stylesheets.map((stylesSheet: Stylesheet) => {
@@ -24,14 +24,6 @@ export async function loadStorage(): Promise<SuperCSSInject> {
             });
 
             state.stylesheets.sort(sortByName);
-        }
-
-        if (tabs !== undefined) {
-            state.tabs = tabs;
-
-            if (state.stylesheets.length === 0) {
-                state.tabs = {};
-            }
         }
     }
 

@@ -1,18 +1,17 @@
 import { Stylesheet } from "../Stylesheet";
 
 interface IProps {
-    id: number;
     stylesheet: Stylesheet;
-    onRemove: (id: number) => unknown;
+    onRemove: (url: string) => unknown;
 }
 
 export function StylesheetItem (props: IProps) {
-    const { id, stylesheet, onRemove } = props;
+    const { stylesheet, onRemove } = props;
 
-    const handleRemove = () => onRemove(id);
+    const handleRemove = () => onRemove(stylesheet.url);
 
     return (
-        <div className="stylesheet" data-index={id}>
+        <div className="stylesheet">
             <div className="stylesheet__url">
                 <a href={stylesheet.url} target="_blank" rel="noreferrer">{stylesheet.url}</a>
             </div>

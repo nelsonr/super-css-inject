@@ -3,7 +3,7 @@ import { Stylesheet } from "../Stylesheet";
 
 interface IProps {
     list: Stylesheet[];
-    onRemove: (id: number) => unknown;
+    onRemove: (url: string) => unknown;
 }
 
 export function StylesheetList (props: IProps) {
@@ -11,9 +11,8 @@ export function StylesheetList (props: IProps) {
 
     const stylesheetsList = list.map((stylesheet, index) => 
         <StylesheetItem 
-            stylesheet={stylesheet} 
             key={index} 
-            id={index} 
+            stylesheet={stylesheet} 
             onRemove={onRemove}
         />
     );

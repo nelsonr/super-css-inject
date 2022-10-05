@@ -1,4 +1,5 @@
 import { Stylesheet } from "./Stylesheet";
+import { Tab, Tabs } from "./types";
 
 export const env = chrome || browser;
 
@@ -15,7 +16,28 @@ export function sortByName (stylesSheetA: Stylesheet, stylesSheetB: Stylesheet) 
     return 0;
 }
 
-export async function getCurrentTab (): Promise<chrome.tabs.Tab | undefined> {
+/**
+ * Get the active stylesheets per browser tab
+ * 
+ * @returns Object with list of stylesheets active per browser tab
+ */
+export function getTabs(): Promise<Tabs> {
+    return new Promise((resolve, reject) => {
+        try {
+            env.runtime.onMessage.addListener((message) => {
+                if (message.action === "activeTabs") {
+                    resolve(message.activeTabs);
+                }
+            });
+                        
+            env.runtime.sendMessage({ action: "getActiveTabs" });
+        } catch (error) {
+            reject(error); 
+        }
+    });
+}
+
+export async function getCurrentTab (): Promise<Tab> {
     const queryOptions = { active: true, lastFocusedWindow: true };
     
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
@@ -24,14 +46,22 @@ export async function getCurrentTab (): Promise<chrome.tabs.Tab | undefined> {
     return tab;
 }
 
-export function toggleActiveStylesheet (isActive: boolean, activeTabId: number, url: string) {
+export function toggleActiveStylesheet (tabId: number, isActive: boolean, url: string) {
     if (isActive) {
-        env.runtime.sendMessage({ action: "inject", tabId: activeTabId, url: url }).then(
+        env.runtime.sendMessage({ 
+            action: "inject", 
+            tabId: tabId, 
+            url: url 
+        }).then(
             () => console.log("INJECT"),
             (error) => console.error(error)
         );
     } else {
-        env.runtime.sendMessage({ action: "clear", tabId: activeTabId, url: url }).then(
+        env.runtime.sendMessage({ 
+            action: "clear", 
+            tabId: tabId, 
+            url: url 
+        }).then(
             () => console.log("CLEAR"),
             (error) => console.error(error)
         );

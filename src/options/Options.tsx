@@ -4,6 +4,7 @@ import { StylesheetList } from "./StylesheetList";
 import { loadStorage } from "../storage";
 import { SuperCSSInject } from "../types";
 import { reducer } from "../reducer";
+import { env } from "../utils";
 
 const initialState: SuperCSSInject = {
     stylesheets: [],
@@ -21,9 +22,8 @@ function Options() {
             const fetchData = async () => {
                 const data: SuperCSSInject = await loadStorage();
                 setState({ 
-                    type: "updateState", 
-                    state: data, 
-                    persist: false 
+                    type: "updateStylesheets", 
+                    stylesheets: data.stylesheets
                 });
             };
     
@@ -40,11 +40,16 @@ function Options() {
         });
     };
 
-    const removeStylesheet = (id: number) => {
+    const removeStylesheet = (url: string) => {
         setState({ 
             type: "remove",
-            id: id, 
+            url: url,
             persist: true 
+        });
+
+        env.runtime.sendMessage({ 
+            action: "stylesheetRemoved", 
+            url: url
         });
     };
     
