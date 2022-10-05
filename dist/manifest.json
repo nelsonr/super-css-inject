@@ -14,7 +14,7 @@
     },
     "content_scripts": [
         {
-            "js": ["SuperCSSInject.js"],
+            "js": ["js/SuperCSSInject.js"],
             "matches": ["http://*/*", "https://*/*"],
             "run_at": "document_end"
         }

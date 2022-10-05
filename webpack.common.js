@@ -7,6 +7,7 @@ module.exports = {
         background: path.join(__dirname, "src/worker/background.ts"),
         options: path.join(__dirname, "src/options/index.tsx"),
         popup: path.join(__dirname, "src/popup/index.tsx"),
+        SuperCSSInject: path.join(__dirname, "src/SuperCSSInject.ts"),
     },
     output: {
         path: path.join(__dirname, "dist/js"),
@@ -21,9 +22,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [
-                    "css-loader",
-                ],
+                use: ["css-loader"],
             },
         ],
     },
