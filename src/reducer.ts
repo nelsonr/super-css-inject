@@ -1,5 +1,4 @@
-import { SuperCSSInject, Tabs } from "./types";
-import { Stylesheet } from "./Stylesheet";
+import { SuperCSSInject } from "./types";
 import { updateStorage } from "./storage";
 
 type State = SuperCSSInject;
@@ -9,8 +8,8 @@ type Action =
     | { type: "remove"; url: string; persist: boolean }
     | { type: "setActive"; url: string; tabId: number; }
     | { type: "setInactive"; url: string; tabId: number; }
-    | { type: "updateStylesheets"; stylesheets: Stylesheet[] }
-    | { type: "updateTabs"; tabs: Tabs };
+    | { type: "updateStylesheets"; stylesheets: string[] }
+    | { type: "updateTabStylesheets"; tabId: number; stylesheets: string[] };
 
 export function reducer(state: State, action: Action): State {
     switch (action.type) {
@@ -23,8 +22,8 @@ export function reducer(state: State, action: Action): State {
     case "updateStylesheets":
         return updateStylesheets(state, action.stylesheets);
 
-    case "updateTabs":
-        return updateTabs(state, action.tabs);
+    case "updateTabStylesheets":
+        return updateTabStylesheets(state, action.tabId, action.stylesheets);
 
     case "setActive":
         return setActive(state, action.url, action.tabId);
@@ -38,15 +37,14 @@ export function reducer(state: State, action: Action): State {
 }
 
 function add(state: State, url: string, persist: boolean): State {
-    const urlExists = state.stylesheets.find((item) => item.url === url);
+    const urlExists = state.stylesheets.find((stylesheet) => stylesheet === url);
 
     // Exit early if URL already exists
     if (urlExists) return state;
     
-    const stylesheet = new Stylesheet(url);
     const updatedState = {
         ...state,
-        stylesheets: [...state.stylesheets, stylesheet],
+        stylesheets: [...state.stylesheets, url],
     };
 
     if (persist) {
@@ -57,7 +55,7 @@ function add(state: State, url: string, persist: boolean): State {
 }
 
 function remove(state: State, url: string, persist: boolean): State {
-    const stylesheets = state.stylesheets.filter((stylesheet) => stylesheet.url !== url);
+    const stylesheets = state.stylesheets.filter((stylesheet) => stylesheet !== url);
     const updatedState = { ...state, stylesheets };
 
     if (persist) {
@@ -67,11 +65,14 @@ function remove(state: State, url: string, persist: boolean): State {
     return updatedState;
 }
 
-function updateStylesheets(state: State, stylesheets: Stylesheet[]): State {
+function updateStylesheets(state: State, stylesheets: string[]): State {
     return { ...state, stylesheets };
 }
 
-function updateTabs(state: State, tabs: Tabs): State {
+function updateTabStylesheets(state: State, tabId: number, stylesheets: string[]): State {
+    const { tabs } = state;
+    tabs[tabId] = new Set(stylesheets);
+
     return { ...state, tabs };
 }
 

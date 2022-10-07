@@ -14,13 +14,12 @@ export async function loadStorage(): Promise<SuperCSSInject> {
         const { stylesheets } = storage.SuperCSSInject;
 
         if (stylesheets !== undefined) {
-            state.stylesheets = stylesheets.map((stylesSheet: Stylesheet) => {
-                if (!stylesSheet.name) {
-                    const urlParts = stylesSheet.url.split("/");
-                    stylesSheet.name = urlParts[urlParts.length - 1];
+            state.stylesheets = stylesheets.map((stylesheet: Stylesheet | string) => {
+                if (typeof stylesheet === "string") {
+                    return stylesheet;
+                } else {
+                    return stylesheet.url;
                 }
-
-                return stylesSheet;
             });
 
             state.stylesheets.sort(sortByName);

@@ -1,8 +1,7 @@
 import { StylesheetItem } from "./StylesheetItem";
-import { Stylesheet } from "../Stylesheet";
 
 interface IProps {
-    list: Stylesheet[];
+    list: string[];
     onRemove: (url: string) => unknown;
 }
 

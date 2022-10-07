@@ -1,11 +1,15 @@
-import { Stylesheet } from "./Stylesheet";
-import { Tab, Tabs } from "./types";
+import { Tab } from "./types";
 
 export const env = chrome || browser;
 
-export function sortByName (stylesSheetA: Stylesheet, stylesSheetB: Stylesheet) {
-    const nameA = stylesSheetA.name.toLowerCase();
-    const nameB = stylesSheetB.name.toLowerCase();
+export function getStylesheetName(url: string) {
+    const urlParts = url.split("/");
+    return urlParts[urlParts.length - 1];
+}
+
+export function sortByName (urlA: string, urlB: string) {
+    const nameA = getStylesheetName(urlA).toLowerCase();
+    const nameB = getStylesheetName(urlB).toLowerCase();
 
     if (nameA < nameB) {
         return -1;
@@ -17,20 +21,23 @@ export function sortByName (stylesSheetA: Stylesheet, stylesSheetB: Stylesheet) 
 }
 
 /**
- * Get the active stylesheets per browser tab
+ * Get the injected stylesheets for a tab
  * 
  * @returns Object with list of stylesheets active per browser tab
  */
-export function getTabs(): Promise<Tabs> {
+export function getTabInjectedStylesheets (tabId: number): Promise<string[]> {
     return new Promise((resolve, reject) => {
         try {
             env.runtime.onMessage.addListener((message) => {
-                if (message.action === "activeTabs") {
-                    resolve(message.activeTabs);
+                if (message.action === "tabStylesheets") {
+                    resolve(message.urlList);
                 }
             });
                         
-            env.runtime.sendMessage({ action: "getActiveTabs" });
+            env.runtime.sendMessage({ 
+                action: "getTabStylesheets", 
+                tabId: tabId 
+            });
         } catch (error) {
             reject(error); 
         }
@@ -46,28 +53,13 @@ export async function getCurrentTab (): Promise<Tab> {
     return tab;
 }
 
-export function toggleActiveStylesheet (tabId: number, isActive: boolean, url: string) {
-    if (isActive) {
-        env.runtime.sendMessage({ 
-            action: "inject", 
-            tabId: tabId, 
-            url: url 
-        }).then(
-            () => console.log("INJECT"),
-            (error) => console.error(error)
-        );
-    } else {
-        env.runtime.sendMessage({ 
-            action: "clear", 
-            tabId: tabId, 
-            url: url 
-        }).then(
-            () => console.log("CLEAR"),
-            (error) => console.error(error)
-        );
-    }
-}
-
 export function setCSSClasses (classes: string[]): string {
     return classes.join(" ").trim();
+}
+
+export function updateBadgeText (tabId: number, text: string) {
+    env.action.setBadgeText({
+        tabId: tabId,
+        text: text
+    });
 }

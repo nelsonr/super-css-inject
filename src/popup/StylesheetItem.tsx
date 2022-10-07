@@ -1,8 +1,7 @@
-import { Stylesheet } from "../Stylesheet";
-import { setCSSClasses } from "../utils";
+import { getStylesheetName, setCSSClasses } from "../utils";
 
 interface IProps {
-    stylesheet: Stylesheet;
+    stylesheet: string;
     active: boolean;
     hidden: boolean;
     onActiveToggle: (active: boolean) => unknown;
@@ -19,9 +18,11 @@ export function StylesheetItem (props: IProps) {
         (active ? "stylesheet--active" : "")
     ]);
 
+    const stylesheetName = getStylesheetName(stylesheet);
+
     return (
         <div className={className} data-index="0" onClick={handleActiveChange}>
-            <div className="stylesheet__url" title={stylesheet.name}>{stylesheet.name}</div>
+            <div className="stylesheet__url" title={stylesheetName}>{stylesheetName}</div>
             <div className="stylesheet__actions">
                 <button className="stylesheet__toggle"></button>
             </div>
