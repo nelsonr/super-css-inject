@@ -1,3 +1,5 @@
+import { env } from "./utils";
+
 function injectStylesheets(urlList: string[]) {
     urlList.forEach((url) => {
         const link = document.createElement("link");
@@ -5,6 +7,7 @@ function injectStylesheets(urlList: string[]) {
         link.type = "text/css";
         link.href = url;
         link.classList.add("SuperCSSInject");
+
         document.head.appendChild(link);
     });
 }
@@ -22,9 +25,6 @@ function clearStylesheets(url: string) {
 }
 
 function main() {
-    const env = window.chrome || window.browser;
-
-    env.runtime.sendMessage({ action: "pageLoad" });
     env.runtime.onMessage.addListener((message) => {
         if (message.action == "inject") {
             injectStylesheets(message.urlList);
@@ -34,6 +34,8 @@ function main() {
             clearStylesheets(message.url);
         }
     });
+
+    env.runtime.sendMessage({ action: "pageLoad" });
 }
 
 window.addEventListener("load", main);
