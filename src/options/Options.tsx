@@ -18,16 +18,17 @@ function Options() {
     useEffect(() => {
         if (firstRender.current) {
             console.log("Load from local storage");
-            
-            const fetchData = async () => {
-                const data: SuperCSSInject = await loadStorage();
-                setState({ 
-                    type: "updateStylesheets", 
-                    stylesheets: data.stylesheets
-                });
-            };
+
+            loadStorage().then(
+                (data: SuperCSSInject) => {
+                    setState({ 
+                        type: "updateStylesheets", 
+                        stylesheets: data.stylesheets
+                    });
+                },
+                (error: Error) => console.error(error)
+            );
     
-            fetchData().catch(console.error);
             firstRender.current = false;
         }
     }, []);
@@ -36,7 +37,14 @@ function Options() {
         setState({ 
             type: "add",
             url: url, 
-            persist: true 
+        });
+    };
+
+    const updateStylesheet = (url: string, newURL: string) => {
+        setState({ 
+            type: "update",
+            url: url,
+            newURL: newURL,
         });
     };
 
@@ -44,14 +52,15 @@ function Options() {
         setState({ 
             type: "remove",
             url: url,
-            persist: true 
         });
 
+        // Send a message to the background worker
+        // to update tabs that might be using the removed stylesheet
         broadcastStylesheetRemoved(url);
     };
     
     return (
-        <div className="App">
+        <>
             <header>
                 <div className="column">
                     <img className="logo" src="icons/128x128.png" width="36" alt="" />
@@ -61,9 +70,13 @@ function Options() {
     
             <main className="column">
                 <StylesheetForm onSubmit={addStylesheet} />
-                <StylesheetList list={state?.stylesheets} onRemove={removeStylesheet} />
+                <StylesheetList 
+                    list={state?.stylesheets} 
+                    onRemove={removeStylesheet} 
+                    onUpdate={updateStylesheet}
+                />
             </main>
-        </div>
+        </>
     );
 }
     
