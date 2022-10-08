@@ -35,3 +35,9 @@ export function updateStorage(data: SuperCSSInject) {
         (error) => console.error(error)
     );
 }
+
+export function withStorage(data: SuperCSSInject) {
+    updateStorage(data);
+
+    return data;
+}

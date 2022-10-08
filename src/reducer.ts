@@ -1,11 +1,12 @@
 import { SuperCSSInject } from "./types";
-import { updateStorage } from "./storage";
+import { withStorage } from "./storage";
 
 type State = SuperCSSInject;
 
 type Action =
-    | { type: "add"; url: string; persist: boolean }
-    | { type: "remove"; url: string; persist: boolean }
+    | { type: "add"; url: string; }
+    | { type: "update"; url: string; newURL: string; }
+    | { type: "remove"; url: string; }
     | { type: "setActive"; url: string; tabId: number; }
     | { type: "setInactive"; url: string; tabId: number; }
     | { type: "updateStylesheets"; stylesheets: string[] }
@@ -14,10 +15,13 @@ type Action =
 export function reducer(state: State, action: Action): State {
     switch (action.type) {
     case "add":
-        return add(state, action.url, action.persist);
+        return withStorage(add(state, action.url));
+
+    case "update":
+        return withStorage(update(state, action.url, action.newURL));
 
     case "remove":
-        return remove(state, action.url, action.persist);
+        return withStorage(remove(state, action.url));
 
     case "updateStylesheets":
         return updateStylesheets(state, action.stylesheets);
@@ -36,33 +40,31 @@ export function reducer(state: State, action: Action): State {
     }
 }
 
-function add(state: State, url: string, persist: boolean): State {
+function add(state: State, url: string): State {
     const urlExists = state.stylesheets.find((stylesheet) => stylesheet === url);
 
-    // Exit early if URL already exists
-    if (urlExists) return state;
+    if (urlExists) {
+        return state;
+    }
     
-    const updatedState = {
+    return {
         ...state,
         stylesheets: [...state.stylesheets, url],
     };
-
-    if (persist) {
-        updateStorage(updatedState);
-    }
-
-    return updatedState;
 }
 
-function remove(state: State, url: string, persist: boolean): State {
+function update(state: State, url: string, newURL: string): State {
+    const stylesheets = state.stylesheets.map((stylesheetURL) => {
+        return stylesheetURL === url ? newURL : stylesheetURL;
+    });
+
+    return { ...state, stylesheets };
+}
+
+function remove(state: State, url: string): State {
     const stylesheets = state.stylesheets.filter((stylesheet) => stylesheet !== url);
-    const updatedState = { ...state, stylesheets };
 
-    if (persist) {
-        updateStorage(updatedState);
-    }
-
-    return updatedState;
+    return { ...state, stylesheets };
 }
 
 function updateStylesheets(state: State, stylesheets: string[]): State {
