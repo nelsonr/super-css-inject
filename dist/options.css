@@ -123,8 +123,8 @@ main {
 /* Buttons */
 
 .button {
-    color: var(--color-neutral-0);
-    background-color: var(--color-neutral-4);
+    color: currentColor;
+    background-color: var(--color-neutral-2);
     cursor: pointer;
     text-transform: uppercase;
     font-weight: bold;
@@ -135,12 +135,13 @@ main {
 }
 
 .button:hover {
-    background-color: var(--color-neutral-5);
+    background-color: var(--color-neutral-3);
 }
 
 /* Buttons > Success */
 
 .button--success {
+    color: var(--color-neutral-0);
     background-color: var(--color-green);
     border-color: var(--color-green);
 }
@@ -174,7 +175,6 @@ main {
     padding-inline: var(--space-2);
     margin-left: var(--space-2);
     position: relative;
-    border: transparent;
     display: flex;
     justify-content: center;
     align-items: center;
