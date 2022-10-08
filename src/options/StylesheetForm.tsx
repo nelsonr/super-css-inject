@@ -41,7 +41,7 @@ export function StylesheetForm (props: IProps) {
                     onChange={(ev) => setURL(ev.target.value)} 
                     placeholder="Insert stylesheet URL here.." 
                 />
-                <input type="submit" value="Add Stylesheet" />
+                <input type="submit" className="button button--success" value="Add Stylesheet" />
             </div>
 
             <MixedContentNote show={isFirefox} />
