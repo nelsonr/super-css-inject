@@ -1,3 +1,4 @@
+import { setCSSClasses } from "../utils";
 import { StylesheetItem } from "./StylesheetItem";
 
 interface IProps {
@@ -15,10 +16,15 @@ export function StylesheetList (props: IProps) {
             onRemove={onRemove}
         />
     );
+
+    const messageClassName = setCSSClasses([
+        "stylesheets-message",
+        (list.length > 0 ? "hidden" : "")
+    ]);
     
     return (
         <>
-            <div className="stylesheets-message hidden">No stylesheets added yet.</div>
+            <div className={messageClassName}>No stylesheets added yet.</div>
             <div className="stylesheets-list">{stylesheetsList}</div>
         </>
     );
