@@ -1,5 +1,6 @@
 import { SuperCSSInject } from "./types";
 import { withStorage } from "./storage";
+import { validateURL } from "./utils";
 
 type State = SuperCSSInject;
 
@@ -42,8 +43,9 @@ export function reducer(state: State, action: Action): State {
 
 function add(state: State, url: string): State {
     const urlExists = state.stylesheets.find((stylesheet) => stylesheet === url);
+    const isValid = validateURL(url);
 
-    if (urlExists) {
+    if (urlExists || !isValid) {
         return state;
     }
     

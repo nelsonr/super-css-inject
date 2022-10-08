@@ -27,7 +27,7 @@ export function StylesheetForm (props: IProps) {
     
     const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
-        onSubmit(url);
+        onSubmit(url.trim());
         setURL("");
     };
     

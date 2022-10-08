@@ -63,3 +63,16 @@ export function updateBadgeText (tabId: number, text: string) {
         text: text
     });
 }
+
+/**
+ * Validates a CSS file URL.
+ * It accepts anything that starts with either "http://" or "https://" and ends with ".css".
+ * 
+ * @param url The URL string to validate
+ * @returns true or false
+ */
+export function validateURL(url: string): boolean {
+    const urlRegex = /^https?:\/\/.*\.css/gi;
+
+    return url.match(urlRegex) !== null;
+}
