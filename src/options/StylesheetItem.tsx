@@ -1,4 +1,5 @@
 import { FormEvent, useRef, useState } from "react";
+import { validateURL } from "../utils";
 
 interface IProps {
     url: string;
@@ -17,9 +18,14 @@ export function StylesheetItem (props: IProps) {
     
     const handleUpdate = (ev: FormEvent) => {
         ev.preventDefault();
-        
-        if (textInputRef.current && (url !== textInputRef.current.value)) {
-            onUpdate(url, textInputRef.current.value);
+
+        if (textInputRef.current) {
+            const newURL = textInputRef.current.value;
+            const isValid = newURL !== url && validateURL(newURL);
+            
+            if (isValid) {
+                onUpdate(url, textInputRef.current.value);
+            }
         }
 
         setIsEdit(false);
