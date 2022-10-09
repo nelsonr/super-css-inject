@@ -121,3 +121,34 @@ export function validateURL(url: string): boolean {
 
     return true;
 }
+
+/**
+ * Max number of selected stylesheets in a single browser tab.
+ * This is only for the purpose of displaying the selection order in the popup.
+ * If you're injecting 10 or more stylesheets at once, 
+ * you probably need to re-think something.
+ */
+export const maxSelectionCount = 9;
+
+/**
+ * Get the selection order of a stylesheet URL when there's more than
+ * one stylesheet selected in a browser tab.
+ * 
+ * @param url The current stylesheet URL
+ * @param selectedList A Set of the selected stylesheets for the current browser tab
+ * @returns A string with the order or null if there's only a single tab selected
+ */
+export function getSelectionOrder (url: string, selectedList: Set<string>) {
+    if (selectedList.has(url) && selectedList.size > 1) {
+        // I mean...
+        if (selectedList.size > maxSelectionCount) {
+            return "🤔";
+        }
+        
+        const order = [...selectedList].indexOf(url) + 1;
+        
+        return `#${order}`;
+    }
+
+    return null;
+}

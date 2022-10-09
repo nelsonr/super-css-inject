@@ -2,29 +2,37 @@ import { getStylesheetName, setCSSClasses } from "../utils";
 
 interface IProps {
     stylesheet: string;
-    active: boolean;
-    hidden: boolean;
+    isSelected: boolean;
+    isHidden: boolean;
+    selectionOrder: string | null;
     onActiveToggle: (active: boolean) => unknown;
 }
 
 export function StylesheetItem (props: IProps) {
-    const { stylesheet, active, hidden, onActiveToggle } = props;
+    const { 
+        stylesheet, 
+        isSelected, 
+        selectionOrder, 
+        isHidden, 
+        onActiveToggle 
+    } = props;
 
-    const handleActiveChange = () => onActiveToggle(!active);
-
+    const handleActiveChange = () => onActiveToggle(!isSelected);
+    
+    const stylesheetName = getStylesheetName(stylesheet);
+    
     const className = setCSSClasses([
         "stylesheet",
-        (hidden ? "hidden" : ""),
-        (active ? "stylesheet--active" : "")
+        (isHidden ? "hidden" : ""),
+        (isSelected ? "stylesheet--active" : ""),
+        (selectionOrder !== null ? "stylesheet--show-order" : "")
     ]);
 
-    const stylesheetName = getStylesheetName(stylesheet);
-
     return (
-        <div className={className} data-index="0" onClick={handleActiveChange}>
+        <div className={className} onClick={handleActiveChange}>
             <div className="stylesheet__url" title={stylesheetName}>{stylesheetName}</div>
             <div className="stylesheet__actions">
-                <button className="stylesheet__toggle"></button>
+                <button className="stylesheet__toggle">{selectionOrder}</button>
             </div>
         </div>
     );

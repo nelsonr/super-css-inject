@@ -276,3 +276,16 @@ header .title {
     height: 3px;
     width: 8px;
 }
+
+.stylesheet--show-order .stylesheet__toggle {
+    font-size: 0.8em;
+    line-height: 0;
+}
+
+.stylesheet--show-order .stylesheet__toggle:after {
+    display: none;
+}
+
+.stylesheets-list--emoji .stylesheet--show-order .stylesheet__toggle {
+    font-size: 1em;
+}
