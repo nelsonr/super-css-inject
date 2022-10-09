@@ -107,14 +107,17 @@ export function updateBadgeText (tabId: number, text: string) {
 }
 
 /**
- * Validates a CSS file URL.
- * It accepts anything that starts with either "http://" or "https://".
+ * Validates an URL.
  * 
  * @param url The URL string to validate
  * @returns true or false
  */
 export function validateURL(url: string): boolean {
-    const urlRegex = /^https?:\/\//gi;
+    try {
+        new URL(url);
+    } catch (error) {
+        return false; 
+    }
 
-    return url.match(urlRegex) !== null;
+    return true;
 }
