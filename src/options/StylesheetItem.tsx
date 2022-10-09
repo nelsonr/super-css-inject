@@ -1,5 +1,5 @@
 import { FormEvent, useRef, useState } from "react";
-import { setCSSClasses, validateURL } from "../utils";
+import { validateURL } from "../utils";
 
 interface IProps {
     url: string;
