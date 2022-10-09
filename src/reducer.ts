@@ -84,7 +84,8 @@ function setActive(state: State, url: string, tabId: number): State {
     const { tabs } = state;
 
     if (!tabs[tabId]) {
-        tabs[tabId] = new Set(url);
+        tabs[tabId] = new Set();
+        tabs[tabId].add(url);
     } else if (!tabs[tabId].has(url)) {
         tabs[tabId].add(url);
     }
