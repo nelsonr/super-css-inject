@@ -57,6 +57,10 @@ input[type="text"]:focus {
     border-color: var(--color-neutral-6);
 }
 
+input[type="text"].not-valid {
+    border-color: var(--color-red);
+}
+
 a {
     color: var(--color-primary);
     text-underline-offset: 2px;
@@ -65,6 +69,10 @@ a {
 
 a:hover {
     text-decoration: underline;
+}
+
+code {
+    color: var(--color-primary);
 }
 
 /* Layout */
@@ -206,6 +214,9 @@ main {
 /* Stylesheets Form */
 
 .stylesheets-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
     width: 100%;
     margin-top: var(--space-6);
 }
@@ -286,4 +297,9 @@ main {
 .note {
     color: var(--color-neutral-6);
     font-size: 13px;
+}
+
+.help {
+    text-align: left;
+    font-size: 12px;
 }
