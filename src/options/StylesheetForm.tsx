@@ -35,13 +35,13 @@ export function StylesheetForm (props: IProps) {
 
     const inputClassName = (isFormValid ? "" : "not-valid");
     
-    const helpClassName = setCSSClasses([
-        "help",
+    const errorClassName = setCSSClasses([
+        "text-error",
         (isFormValid ? "hidden" : "")
     ]);
     
     const mixedContentClassName = setCSSClasses([
-        "help",
+        "text-help",
         (isFirefox ? "" : "hidden")
     ]);
 
@@ -59,8 +59,8 @@ export function StylesheetForm (props: IProps) {
                 <input type="submit" className="button button--success" value="Add Stylesheet" />
             </div>
 
-            <div className={helpClassName}>
-                <strong>Note:</strong> A valid URL should start with <code>http://</code> or <code>https://</code>. Example: <code>http://localhost/my-theme.css</code>
+            <div className={errorClassName}>
+                Please provide a valid URL. Example: <code>http://localhost/my-theme.css</code>
             </div>
             
             <div className={mixedContentClassName}>

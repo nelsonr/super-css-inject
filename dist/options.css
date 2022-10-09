@@ -295,7 +295,13 @@ main {
     display: none;
 }
 
-.help {
+.text-help {
+    text-align: left;
+    font-size: 12px;
+}
+
+.text-error {
+    color: var(--color-red);
     text-align: left;
     font-size: 12px;
 }
