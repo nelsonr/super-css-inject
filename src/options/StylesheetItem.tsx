@@ -1,5 +1,5 @@
 import { FormEvent, useRef, useState } from "react";
-import { validateURL } from "../utils";
+import { setCSSClasses, validateURL } from "../utils";
 
 interface IProps {
     url: string;
@@ -10,10 +10,14 @@ interface IProps {
 export function StylesheetItem (props: IProps) {
     const { url, onRemove, onUpdate } = props;
     const [isEdit, setIsEdit] = useState(false);
+    const [isFormValid, setValidForm] = useState(true);
     const textInputRef = useRef<HTMLInputElement>(null);
 
     const handleRemove = () => onRemove(url);
-    const handleCancel = () => setIsEdit(false);
+    const handleCancel = () => {
+        setIsEdit(false);
+        setValidForm(true);
+    };
     const handleEdit = () => setIsEdit(true);
     
     const handleUpdate = (ev: FormEvent) => {
@@ -21,21 +25,33 @@ export function StylesheetItem (props: IProps) {
 
         if (textInputRef.current) {
             const newURL = textInputRef.current.value;
-            const isValid = newURL !== url && validateURL(newURL);
-            
-            if (isValid) {
-                onUpdate(url, textInputRef.current.value);
-            }
-        }
+            const hasChanged = newURL !== url;
+            const isValid = validateURL(newURL);
 
-        setIsEdit(false);
+            if (hasChanged) {
+                if (isValid) {
+                    onUpdate(url, textInputRef.current.value);
+                    setIsEdit(false);
+                    setValidForm(true);
+                } else {
+                    setValidForm(false);
+                }
+            } else {
+                setIsEdit(false);
+                setValidForm(true);
+            }
+        } else {
+            setIsEdit(false);
+        }
     };
 
     const renderEdit = () => {
+        const inputClassName = (isFormValid ? "" : "not-valid");
+        
         return ( 
             <form className="stylesheet" onSubmit={handleUpdate}>
                 <div className="stylesheet__url">
-                    <input type="text" defaultValue={url} ref={textInputRef} autoFocus />
+                    <input type="text" defaultValue={url} ref={textInputRef} className={inputClassName} autoFocus />
                 </div>
                 <div className="stylesheet__actions">
                     <button className="button button--small button--success" type="submit">Save</button>
