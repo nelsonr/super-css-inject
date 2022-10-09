@@ -72,7 +72,8 @@ a:hover {
 }
 
 code {
-    color: var(--color-primary);
+    background-color: var(--color-neutral-2);
+    padding-inline: var(--space-1);
 }
 
 /* Layout */
@@ -292,11 +293,6 @@ main {
 
 .hidden {
     display: none;
-}
-
-.note {
-    color: var(--color-neutral-6);
-    font-size: 13px;
 }
 
 .help {
