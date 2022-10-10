@@ -2,13 +2,15 @@ import { env } from "./utils";
 
 function injectStylesheets(urlList: string[]) {
     urlList.forEach((url) => {
-        const link = document.createElement("link");
-        link.rel = "stylesheet";
-        link.type = "text/css";
-        link.href = url;
-        link.classList.add("SuperCSSInject");
+        if (!document.querySelector(`link[href="${url}"]`)) {
+            const link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.type = "text/css";
+            link.href = url;
+            link.classList.add("SuperCSSInject");
 
-        document.head.appendChild(link);
+            document.head.appendChild(link);
+        }
     });
 }
 
