@@ -1,6 +1,5 @@
-import { Stylesheet } from "./Stylesheet";
 import { SuperCSSInject } from "./types";
-import { env, sortByName } from "./utils";
+import { env, importStylesheets } from "./utils";
 
 export async function loadStorage(): Promise<SuperCSSInject> {
     const state: SuperCSSInject = {
@@ -14,15 +13,7 @@ export async function loadStorage(): Promise<SuperCSSInject> {
         const { stylesheets } = storage.SuperCSSInject;
 
         if (stylesheets !== undefined) {
-            state.stylesheets = stylesheets.map((stylesheet: Stylesheet | string) => {
-                if (typeof stylesheet === "string") {
-                    return stylesheet;
-                } else {
-                    return stylesheet.url;
-                }
-            });
-
-            state.stylesheets.sort(sortByName);
+            state.stylesheets = importStylesheets(stylesheets);
         }
     }
 

@@ -1,3 +1,4 @@
+import { Stylesheet } from "./Stylesheet";
 import { Tab } from "./types";
 
 /**
@@ -151,4 +152,14 @@ export function getSelectionOrder (url: string, selectedList: Set<string>) {
     }
 
     return null;
+}
+
+export function importStylesheets(stylesheets: Stylesheet[] | string[]): string[] {
+    return stylesheets.map((stylesheet: Stylesheet | string) => {
+        if (typeof stylesheet === "string") {
+            return stylesheet;
+        } else {
+            return stylesheet.url;
+        }
+    }).sort(sortByName);
 }
