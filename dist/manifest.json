@@ -1,6 +1,6 @@
 {
     "name": "Super CSS Inject",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "description": "Keep multiple stylesheets ready to inject and change on the fly!",
     "manifest_version": 3,
     "permissions": ["activeTab", "storage"],
