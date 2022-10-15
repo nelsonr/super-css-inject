@@ -1,3 +1,0 @@
-cd src
-rm -rf icons/.DS_Store
-zip -r ../build-$(date +"%s").zip *
