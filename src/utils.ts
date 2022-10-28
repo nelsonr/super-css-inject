@@ -1,5 +1,5 @@
-import { Stylesheet } from "./Stylesheet";
-import { Tab } from "./types";
+import { loadStorage } from "./storage";
+import { Stylesheets, Tab } from "./types";
 
 /**
  * Alias for accessing the browser extension API.
@@ -47,23 +47,10 @@ export function sortByName (urlA: string, urlB: string) {
  * 
  * @returns Object with list of stylesheets active per browser tab
  */
-export function getTabInjectedStylesheets (tabId: number): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-        try {
-            env.runtime.onMessage.addListener((message) => {
-                if (message.action === "tabStylesheets") {
-                    resolve(message.urlList);
-                }
-            });
-                        
-            env.runtime.sendMessage({ 
-                action: "getTabStylesheets", 
-                tabId: tabId 
-            });
-        } catch (error) {
-            reject(error); 
-        }
-    });
+export async function getInjectedStylesheets (tabId: number): Promise<Stylesheets> {
+    const storage = await loadStorage();
+
+    return storage.injected[tabId] || [];
 }
 
 /**
@@ -73,7 +60,7 @@ export function getTabInjectedStylesheets (tabId: number): Promise<string[]> {
  * @returns Tab information wrapped in a Promise
  */
 export async function getCurrentTab (): Promise<Tab> {
-    const queryOptions = { active: true, lastFocusedWindow: true };
+    const queryOptions = { active: true, currentWindow: true };
     
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
     const [tab] = await env.tabs.query(queryOptions);
@@ -139,10 +126,10 @@ export const maxSelectionCount = 9;
  * @param selectedList A Set of the selected stylesheets for the current browser tab
  * @returns A string with the order or null if there's only a single tab selected
  */
-export function getSelectionOrder (url: string, selectedList: Set<string>) {
-    if (selectedList.has(url) && selectedList.size > 1) {
+export function getSelectionOrder (url: string, selectedList: string[]) {
+    if (selectedList.includes(url) && selectedList.length > 1) {
         // I mean...
-        if (selectedList.size > maxSelectionCount) {
+        if (selectedList.length > maxSelectionCount) {
             return "🤔";
         }
         
@@ -152,14 +139,4 @@ export function getSelectionOrder (url: string, selectedList: Set<string>) {
     }
 
     return null;
-}
-
-export function importStylesheets(stylesheets: Stylesheet[] | string[]): string[] {
-    return stylesheets.map((stylesheet: Stylesheet | string) => {
-        if (typeof stylesheet === "string") {
-            return stylesheet;
-        } else {
-            return stylesheet.url;
-        }
-    }).sort(sortByName);
 }

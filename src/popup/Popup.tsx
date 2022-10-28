@@ -1,90 +1,69 @@
 import { useState, useEffect, useReducer, useRef } from "react";
-import { reducer } from "../reducer";
-import { loadStorage } from "../storage";
-import { SuperCSSInject, Tab, TabId } from "../types";
-import { getTabInjectedStylesheets, getCurrentTab } from "../utils";
-import { broadcastClearStylesheet, broadcastInjectStylesheet } from "../Messages";
+import { PopupState } from "../types";
 import { PopupHeader } from "./PopupHeader";
 import { PopupPreferences } from "./PopupPreferences";
 import { PopupSearch } from "./PopupSearch";
 import { PopupEmptyMessage } from "./PopupEmptyMessage";
 import { StylesheetList } from "./StylesheetList";
+import { PopupReducer } from "./PopupReducer";
+import { loadStorage } from "../storage";
+import { getCurrentTab } from "../utils";
 
-const initialState: SuperCSSInject = {
+export async function getInitialPopupState(): Promise<PopupState> {
+    const storage = await loadStorage();
+    const currentTab = await getCurrentTab();
+
+    return {
+        stylesheets: storage.stylesheets,
+        injected: storage.injected,
+        tabId: currentTab?.id,
+    };
+}
+
+const emptyState: PopupState = {
     stylesheets: [],
-    tabs: {}
+    injected: {},
+    tabId: undefined,
 };
 
 function Popup() {
     const firstRender = useRef(true);
-    const [state, setState] = useReducer(reducer, initialState);
-    const [currentTabId, setCurrentTabId] = useState<TabId>();
+    const [state, setState] = useReducer(PopupReducer, emptyState);
     const [searchValue, setSearchValue] = useState("");
 
     useEffect(() => {
         if (firstRender.current) {
             console.log("Load from local storage");
-            
-            loadStorage().then(
-                (data: SuperCSSInject) => { 
-                    setState({ 
-                        type: "updateStylesheets", 
-                        stylesheets: data.stylesheets, 
-                    }); 
-                },
-                (error) => console.error(error)
-            );
-            
-            getCurrentTab().then(
-                (tab: Tab) => {
-                    if (tab && tab.id) {
-                        const tabId = tab.id;
 
-                        getTabInjectedStylesheets(tabId).then(
-                            (stylesheets: string[]) => {
-                                setState({ 
-                                    type: "updateTabStylesheets", 
-                                    tabId: tabId,
-                                    stylesheets: stylesheets 
-                                });
-                            },
-                            (error) => console.error(error)
-                        );
-                        
-                        setCurrentTabId(tabId);
-                    }
-                }, 
-                (error) => console.error(error)
-            );
-        
+            getInitialPopupState().then((data: PopupState) => {
+                setState({
+                    type: "updateState",
+                    state: data,
+                });
+            });
+
             firstRender.current = false;
         }
     }, []);
 
     const handleSelection = (isActive: boolean, url: string) => {
-        if (currentTabId) {
+        if (state.tabId) {
             console.log("Toggle active Stylesheet");
-        
-            setState({
-                type: isActive ? "setActive" : "setInactive",
-                url: url,
-                tabId: currentTabId,
-            });
 
-            if (isActive) {
-                broadcastInjectStylesheet(currentTabId, url);
-            } else {
-                broadcastClearStylesheet(currentTabId, url);
-            }
+            setState({
+                type: isActive ? "inject" : "clear",
+                tabId: state.tabId,
+                url: url,
+            });
         }
     };
 
-    const activeStylesheets = (): Set<string> => {
-        if (currentTabId && state.tabs[currentTabId]) {
-            return state.tabs[currentTabId];
+    const activeStylesheets = (): string[] => {
+        if (state.tabId) {
+            return state.injected[state.tabId] || [];
         }
 
-        return new Set();
+        return [];
     };
 
     const renderStylesheetsList = () => {
@@ -94,35 +73,28 @@ function Popup() {
                     list={state.stylesheets}
                     activeList={activeStylesheets()}
                     onSelectionChange={handleSelection}
-                    search={searchValue} 
+                    search={searchValue}
                 />
             );
         }
-        
+
         return <PopupEmptyMessage />;
     };
-    
+
     const renderSearch = () => {
         if (state.stylesheets.length >= 6) {
             return (
-                <PopupSearch
-                    search={searchValue}
-                    onChange={setSearchValue}
-                />
+                <PopupSearch search={searchValue} onChange={setSearchValue} />
             );
         }
-        
+
         return null;
     };
 
     return (
         <>
             <PopupPreferences />
-            
-            <PopupHeader>
-                {renderSearch()}
-            </PopupHeader>
-            
+            <PopupHeader>{renderSearch()}</PopupHeader>
             {renderStylesheetsList()}
         </>
     );
