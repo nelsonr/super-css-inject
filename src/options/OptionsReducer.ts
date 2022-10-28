@@ -1,5 +1,5 @@
 import { updateStorage } from "../storage";
-import { StorageData } from "../types";
+import { StorageData, Tabs } from "../types";
 import { validateURL } from "../utils";
 
 type State = StorageData;
@@ -41,6 +41,7 @@ function add(state: State, url: string): State {
         ...state,
         stylesheets: [...state.stylesheets, url],
     };
+    
     updateStorage(updatedState);
 
     return updatedState;
@@ -52,6 +53,7 @@ function update(state: State, url: string, newURL: string): State {
     });
 
     const updatedState = { ...state, stylesheets };
+    
     updateStorage(updatedState);
 
     return updatedState;
@@ -59,9 +61,25 @@ function update(state: State, url: string, newURL: string): State {
 
 function remove(state: State, url: string): State {
     const stylesheets = state.stylesheets.filter((stylesheet) => stylesheet !== url);
-
-    const updatedState = { ...state, stylesheets };
+    const injected = removeInjectedURL(state.injected, url);
+    const updatedState = { stylesheets, injected };
+    
     updateStorage(updatedState);
     
     return updatedState;
+}
+
+function removeInjectedURL(injected: Tabs, url: string): Tabs {
+    const pairs = Object.entries(injected);
+    
+    return pairs.reduce((acc, [tabId, stylesheets]) => {
+        if (stylesheets.includes(url)) {
+            const index = stylesheets.indexOf(url);
+            stylesheets.splice(index, 1);
+                
+            return { ...acc, [tabId]: stylesheets };
+        }
+
+        return { ...acc, [tabId]: stylesheets };
+    }, {});
 }
