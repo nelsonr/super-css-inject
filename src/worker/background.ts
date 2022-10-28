@@ -18,9 +18,6 @@ async function onPageLoad (tabId: number) {
     
     if (injected.length > 0) {
         sendInjectMessageToTab(tabId, injected);
-    }
-    
-    if (injected.length > 0) {
         updateBadgeText(tabId, injected.length.toString());
     } else {
         updateBadgeText(tabId, "");
