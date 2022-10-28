@@ -3,7 +3,7 @@ import {
     sendInjectMessageToTab
 } from "../Messages";
 
-import { loadStorage } from "../storage";
+import { loadStorage, updateStorage } from "../storage";
 import { TabId } from "../types";
 import { env, updateBadgeText } from "../utils";
 
@@ -78,6 +78,17 @@ env.runtime.onMessage.addListener((message, sender) => {
 
     default:
         break;
+    }
+});
+
+env.tabs.onRemoved.addListener(async (tabId) => {
+    const storage = await loadStorage();
+    const hasTab = storage.injected[tabId] !== undefined;
+
+    if (hasTab) {
+        delete storage.injected[tabId];
+        updateStorage(storage);
+        console.log("Tab closed:", tabId);
     }
 });
 
