@@ -33,10 +33,6 @@
             "error",
             "consistent"
         ],
-        "indent": [
-            "error",
-            4
-        ],
         "keyword-spacing": [
             "error",
             {
