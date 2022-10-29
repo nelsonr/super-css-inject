@@ -1,43 +1,54 @@
 import { env } from "./utils";
 
-function injectStylesheets(urlList: string[]) {
-    urlList.forEach((url) => {
-        if (!document.querySelector(`link[href="${url}"]`)) {
-            const link = document.createElement("link");
-            link.rel = "stylesheet";
-            link.type = "text/css";
-            link.href = url;
-            link.classList.add("SuperCSSInject");
-
-            document.head.appendChild(link);
-        }
-    });
+function inject (url: string) {
+    const link = createLinkElement(url);
+    document.head.append(link);
 }
 
-function clearStylesheets(url: string) {
-    const links: NodeListOf<HTMLLinkElement> = document.querySelectorAll("link.SuperCSSInject");
+function clear (url: string) {
+    const link = document.querySelector(`link[href="${url}"].SuperCSSInject`);
+    link && link.remove();
+}
 
-    if (links.length > 0) {
-        links.forEach((link: HTMLLinkElement) => {
-            if (link.href === url) {
-                link.remove();
+function update (urlList: string[]) {
+    const links: NodeListOf<HTMLLinkElement> = document.querySelectorAll("link.SuperCSSInject");
+    const currentList = Array.from(links).map((link) => link.href);
+    
+    if (currentList.length > urlList.length) {
+        for (const url of currentList) {
+            if (!urlList.includes(url)) {
+                clear(url);
             }
-        });
+        } 
+    } else {
+        for (const url of urlList) {
+            if (!currentList.includes(url)) {
+                inject(url);
+            }
+        } 
     }
 }
 
-function main() {
+function createLinkElement (url: string) {
+    const link = document.createElement("link");
+    
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    link.href = url;
+    link.classList.add("SuperCSSInject");
+    
+    return link;
+}
+
+function main () {
     env.runtime.onMessage.addListener((message) => {
         if (message.action == "inject") {
-            injectStylesheets(message.urlList);
-        }
-
-        if (message.action == "clear") {
-            clearStylesheets(message.url);
+            console.log("Super CSS Inject!");
+            update(message.urlList);
         }
     });
-
-    env.runtime.sendMessage({ action: "pageLoad" });
+    
+    env.runtime.sendMessage({ action: "load" });
 }
 
 window.addEventListener("load", main);

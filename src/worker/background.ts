@@ -1,11 +1,7 @@
-import {
-    sendClearMessageToTab,
-    sendInjectMessageToTab
-} from "../Messages";
-
-import { loadStorage, updateStorage } from "../storage";
 import { TabId } from "../types";
-import { env, updateBadgeText } from "../utils";
+import { sendInjectMessageToTab } from "../Messages";
+import { loadStorage, updateStorage } from "../storage";
+import { env, updateBadgeCount, updateBadgesCount } from "../utils";
 
 async function getInjectedByTab (tabId: number): Promise<string[]> {
     const storage = await loadStorage();
@@ -16,37 +12,8 @@ async function getInjectedByTab (tabId: number): Promise<string[]> {
 async function onPageLoad (tabId: number) {
     const injected = await getInjectedByTab(tabId);
     
-    if (injected.length > 0) {
-        sendInjectMessageToTab(tabId, injected);
-        updateBadgeText(tabId, injected.length.toString());
-    } else {
-        updateBadgeText(tabId, "");
-    }
-}
-
-async function onInject (tabId: number) {
-    const injected = await getInjectedByTab(tabId);
-    
-    if (injected.length === 0) {
-        return;
-    }
-    
-    updateBadgeText(tabId, injected.length.toString());
     sendInjectMessageToTab(tabId, injected);
-}
-
-async function onClear (tabId: number, url: string) {
-    const injected = await getInjectedByTab(tabId);
-    
-    if (!injected.includes(url)) {
-        sendClearMessageToTab(tabId, url);
-    }
-    
-    if (injected.length > 0) {
-        updateBadgeText(tabId, injected.length.toString());
-    } else {
-        updateBadgeText(tabId, "");
-    }
+    updateBadgeCount(injected, tabId);
 }
 
 env.runtime.onMessage.addListener((message, sender) => {
@@ -55,22 +22,12 @@ env.runtime.onMessage.addListener((message, sender) => {
     console.log("Message: ", message);
 
     switch (message.action) {
-    case "pageLoad":
-        if (tabId) {
-            onPageLoad(tabId);
-        }
+    case "load":
+        tabId && onPageLoad(tabId);
         break;
 
-    case "inject":
-        if (tabId) {
-            onInject(tabId);
-        } 
-        break;
-
-    case "clear":
-        if (tabId) {
-            onClear(tabId, message.url);
-        }
+    case "stylesheetRemoved":
+        updateBadgesCount();
         break;
 
     default:

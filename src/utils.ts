@@ -17,8 +17,9 @@ export const env = chrome || browser;
  * @param url A stylesheet URL
  * @returns The last portion of the URL
  */
-export function getStylesheetName(url: string) {
+export function getStylesheetName (url: string) {
     const urlParts = url.split("/");
+    
     return urlParts[urlParts.length - 1];
 }
 
@@ -60,10 +61,13 @@ export async function getInjectedStylesheets (tabId: number): Promise<Stylesheet
  * @returns Tab information wrapped in a Promise
  */
 export async function getCurrentTab (): Promise<Tab> {
-    const queryOptions = { active: true, currentWindow: true };
+    const queryOptions = {
+        active: true,
+        currentWindow: true 
+    };
     
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
-    const [tab] = await env.tabs.query(queryOptions);
+    const [ tab ] = await env.tabs.query(queryOptions);
 
     return tab;
 }
@@ -94,13 +98,36 @@ export function updateBadgeText (tabId: number, text: string) {
     });
 }
 
+export function updateBadgeCount (injected: string[], tabId: number) {
+    if (injected && injected.length > 0) {
+        console.log("Update count in Tab:", tabId);
+        updateBadgeText(tabId, injected.length.toString());
+    } else {
+        console.log("Clear count in Tab:", tabId);
+        updateBadgeText(tabId, "");
+    }
+}
+
+export async function updateBadgesCount () {
+    const { injected } = await loadStorage();
+    const tabs: chrome.tabs.Tab[] = await env.tabs.query({});
+
+    for (const tab of tabs) {
+        const tabId = tab.id;
+
+        if (tabId) {
+            updateBadgeCount(injected[tabId] || [], tabId);
+        }
+    }
+}
+
 /**
  * Validates an URL.
  * 
  * @param url The URL string to validate
  * @returns true or false
  */
-export function validateURL(url: string): boolean {
+export function validateURL (url: string): boolean {
     try {
         new URL(url);
     } catch (error) {
@@ -133,7 +160,7 @@ export function getSelectionOrder (url: string, selectedList: string[]) {
             return "🤔";
         }
         
-        const order = [...selectedList].indexOf(url) + 1;
+        const order = [ ...selectedList ].indexOf(url) + 1;
         
         return `#${order}`;
     }

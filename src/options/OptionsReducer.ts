@@ -10,7 +10,7 @@ type Action =
     | { type: "remove"; url: string; }
     | { type: "updateState"; state: State };
 
-export function OptionsReducer(state: State, action: Action): State {
+export function OptionsReducer (state: State, action: Action): State {
     switch (action.type) {
     case "add":
         return add(state, action.url);
@@ -29,7 +29,7 @@ export function OptionsReducer(state: State, action: Action): State {
     }
 }
 
-function add(state: State, url: string): State {
+function add (state: State, url: string): State {
     const urlExists = state.stylesheets.find((stylesheet) => stylesheet === url);
     const isValid = validateURL(url);
 
@@ -39,7 +39,7 @@ function add(state: State, url: string): State {
     
     const updatedState = {
         ...state,
-        stylesheets: [...state.stylesheets, url],
+        stylesheets: [ ...state.stylesheets, url ] 
     };
     
     updateStorage(updatedState);
@@ -47,39 +47,44 @@ function add(state: State, url: string): State {
     return updatedState;
 }
 
-function update(state: State, url: string, newURL: string): State {
+function update (state: State, url: string, newURL: string): State {
     const stylesheets = state.stylesheets.map((stylesheetURL) => {
         return stylesheetURL === url ? newURL : stylesheetURL;
     });
 
-    const updatedState = { ...state, stylesheets };
+    const updatedState = {
+        ...state,
+        stylesheets 
+    };
     
     updateStorage(updatedState);
 
     return updatedState;
 }
 
-function remove(state: State, url: string): State {
+function remove (state: State, url: string): State {
     const stylesheets = state.stylesheets.filter((stylesheet) => stylesheet !== url);
     const injected = removeInjectedURL(state.injected, url);
-    const updatedState = { stylesheets, injected };
+    const updatedState = {
+        stylesheets,
+        injected 
+    };
     
     updateStorage(updatedState);
     
     return updatedState;
 }
 
-function removeInjectedURL(injected: Tabs, url: string): Tabs {
-    const pairs = Object.entries(injected);
-    
-    return pairs.reduce((acc, [tabId, stylesheets]) => {
-        if (stylesheets.includes(url)) {
-            const index = stylesheets.indexOf(url);
-            stylesheets.splice(index, 1);
-                
-            return { ...acc, [tabId]: stylesheets };
-        }
+function removeInjectedURL (injected: Tabs, url: string): Tabs {
+    for (const tabId in injected) {
+        if (injected[tabId]) {
+            injected[tabId] = injected[tabId]?.filter(item => item !== url);
 
-        return { ...acc, [tabId]: stylesheets };
-    }, {});
+            if (injected[tabId]?.length == 0) {
+                delete injected[tabId];
+            }
+        }
+    }
+    
+    return injected;
 }

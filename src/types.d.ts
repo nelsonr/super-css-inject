@@ -3,7 +3,7 @@ export type TabId = number | undefined;
 export type Stylesheets = string[];
 
 export interface Tabs {
-    [id: number]: Stylesheets;
+    [id: number]: Stylesheets | undefined;
 }
 
 export interface StorageData {
