@@ -2,6 +2,10 @@ export type Tab = chrome.tabs.Tab | undefined;
 export type TabId = number | undefined;
 export type Stylesheets = string[];
 
+export interface Stylesheet {
+    url: string;
+}
+
 export interface Tabs {
     [id: number]: Stylesheets | undefined;
 }
