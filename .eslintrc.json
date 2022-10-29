@@ -33,6 +33,15 @@
             "error",
             "consistent"
         ],
+        "indent": [
+            "warn",
+            4,
+            {
+                "ignoredNodes": [
+                    "VariableDeclaration[declarations.length=0]"
+                ]
+            }
+        ],
         "keyword-spacing": [
             "error",
             {
