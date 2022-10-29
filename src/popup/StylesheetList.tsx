@@ -13,7 +13,7 @@ interface IProps {
     onSelectionChange: (isActive: boolean, url: string) => unknown;
 }
 
-export function StylesheetList(props: IProps) {
+export function StylesheetList (props: IProps) {
     const { list, activeList, search, onSelectionChange } = props;
 
     const searchIsEmpty = search.trim().length === 0;

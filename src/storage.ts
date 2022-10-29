@@ -2,7 +2,7 @@ import { Stylesheet } from "./Stylesheet";
 import { StorageData, Stylesheets } from "./types";
 import { env, sortByName } from "./utils";
 
-export async function loadStorage(): Promise<StorageData> {
+export async function loadStorage (): Promise<StorageData> {
     const data: StorageData = {
         stylesheets: [],
         injected: {}
@@ -25,11 +25,11 @@ export async function loadStorage(): Promise<StorageData> {
     return data;
 }
 
-export function updateStorage(data: StorageData): Promise<void> {
+export function updateStorage (data: StorageData): Promise<void> {
     return env.storage.local.set({ SuperCSSInject: data });
 }
 
-function importStylesheets(stylesheets: Stylesheet[] | string[]): Stylesheets {
+function importStylesheets (stylesheets: Stylesheet[] | string[]): Stylesheets {
     return stylesheets.map((stylesheet: Stylesheet | string) => {
         const isString = typeof stylesheet === "string";
     

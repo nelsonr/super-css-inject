@@ -9,7 +9,7 @@ import { PopupReducer } from "./PopupReducer";
 import { loadStorage } from "../storage";
 import { getCurrentTab } from "../utils";
 
-export async function getInitialPopupState(): Promise<PopupState> {
+export async function getInitialPopupState (): Promise<PopupState> {
     const storage = await loadStorage();
     const currentTab = await getCurrentTab();
 
@@ -26,10 +26,10 @@ const emptyState: PopupState = {
     tabId: undefined,
 };
 
-function Popup() {
+function Popup () {
     const firstRender = useRef(true);
-    const [state, setState] = useReducer(PopupReducer, emptyState);
-    const [searchValue, setSearchValue] = useState("");
+    const [ state, setState ] = useReducer(PopupReducer, emptyState);
+    const [ searchValue, setSearchValue ] = useState("");
 
     useEffect(() => {
         if (firstRender.current) {

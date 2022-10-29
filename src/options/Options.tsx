@@ -10,9 +10,9 @@ const emptyState: StorageData = {
     injected: {},
 };
 
-function Options() {
+function Options () {
     const firstRender = useRef(true);
-    const [state, setState] = useReducer(OptionsReducer, emptyState);
+    const [ state, setState ] = useReducer(OptionsReducer, emptyState);
 
     useEffect(() => {
         if (firstRender.current) {
