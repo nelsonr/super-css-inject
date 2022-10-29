@@ -1,6 +1,6 @@
 import { sendInjectMessageToTab } from "../Messages";
 import { updateStorage } from "../storage";
-import { PopupState, Tabs } from "../types";
+import { PopupState } from "../types";
 import { updateBadgesCount } from "../utils";
 
 type State = PopupState;
@@ -10,66 +10,68 @@ type Action =
     | { type: "inject"; url: string; tabId: number; }
     | { type: "clear"; url: string; tabId: number; };
 
-const inject = createAction(add);
-const clear = createAction(remove);
+const inject = updateWithStorage(injectAction);
+const clear = updateWithStorage(clearAction);
 
 export function PopupReducer (state: State, action: Action): State {
     switch (action.type) {
     case "updateState":
         return action.state;
-
+        
     case "inject":
         return inject(state, action.url, action.tabId);
-
+        
     case "clear":
         return clear(state, action.url, action.tabId);
-
+        
     default:
         return state;
     }
 }
 
-function createAction (action: (injected: Tabs, tabId: number, url: string) => Tabs) {
+function updateWithStorage (action: (state: State, tabId: number, url: string) => State) {
     return (state: State, url: string, tabId: number) => {
-        const injected = action(state.injected, tabId, url);
-        const updatedState = {
-            ...state,
-            injected 
-        };
+        const updatedState = action(state, tabId, url);
         
         updateStorage(updatedState).then(() => {
-            sendInjectMessageToTab(tabId, injected[tabId] || []);
+            sendInjectMessageToTab(tabId, updatedState.injected[tabId] || []);
             updateBadgesCount();
         });
-
+        
         return updatedState;
     };
 }
 
-function add (injected: Tabs, tabId: number, url: string): Tabs {
-    const tabs = { ...injected };
+function injectAction (state: State, tabId: number, url: string): State {
+    const { injected } = state;
     
-    if (tabs[tabId]) {
-        if (!tabs[tabId]?.includes(url)) {
-            tabs[tabId]?.push(url);
+    if (injected[tabId]) {
+        if (!injected[tabId]?.includes(url)) {
+            injected[tabId]?.push(url);
         }
     } else {
-        tabs[tabId] = [ url ];
+        injected[tabId] = [ url ];
     }
-
-    return tabs;
+    
+    return {
+        ...state,
+        injected
+    };
 }
 
-function remove (injected: Tabs, tabId: number, url: string): Tabs {
-    const tabs = { ...injected };
-    
-    if (tabs[tabId]) {
-        tabs[tabId] = tabs[tabId]?.filter(item => item !== url);
+function clearAction (state: State, tabId: number, url: string): State {
+    const { injected } = state;
 
-        if (tabs[tabId]?.length == 0) {
-            delete tabs[tabId];
+    if (injected[tabId]) {
+        injected[tabId] = injected[tabId]?.filter(item => item !== url);
+
+        if (injected[tabId]?.length == 0) {
+            delete injected[tabId];
         }
     }
-
-    return tabs;
+                    
+    return {
+        ...state,
+        injected 
+    };
 }
