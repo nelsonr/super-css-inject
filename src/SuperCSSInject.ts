@@ -68,7 +68,6 @@ function maintainStylesheetsOrder () {
 
             if (!isInjectedStylesheetLast) {
                 observer.disconnect();
-                console.log("Move injected Stylesheets");
                 moveInjectedStylesheets();
             }
         }
