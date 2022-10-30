@@ -5,13 +5,16 @@ import { validateURL } from "../utils";
 type State = StorageData;
 
 type Action =
+    | { type: "updateState"; state: State }
     | { type: "add"; url: string; }
     | { type: "update"; url: string; newURL: string; }
-    | { type: "remove"; url: string; }
-    | { type: "updateState"; state: State };
+    | { type: "remove"; url: string; };
 
 export function OptionsReducer (state: State, action: Action): State {
     switch (action.type) {
+    case "updateState":
+        return action.state;
+
     case "add":
         return add(state, action.url);
 
@@ -20,9 +23,6 @@ export function OptionsReducer (state: State, action: Action): State {
 
     case "remove":
         return remove(state, action.url);
-
-    case "updateState":
-        return action.state;
 
     default:
         return state;

@@ -1,9 +1,9 @@
 import { useEffect, useReducer, useRef } from "react";
-import { StylesheetForm } from "./StylesheetForm";
-import { StylesheetList } from "./StylesheetList";
 import { loadStorage } from "../storage";
 import { StorageData } from "../types";
 import { OptionsReducer } from "./OptionsReducer";
+import { StylesheetForm } from "./StylesheetForm";
+import { StylesheetList } from "./StylesheetList";
 
 const emptyState: StorageData = {
     stylesheets: [],

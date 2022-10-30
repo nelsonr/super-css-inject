@@ -2,7 +2,7 @@ import {
     getSelectionOrder,
     getStylesheetName,
     maxSelectionCount,
-    setCSSClasses,
+    setCSSClasses
 } from "../utils";
 import { StylesheetItem } from "./StylesheetItem";
 

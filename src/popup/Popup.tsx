@@ -1,13 +1,13 @@
-import { useState, useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
+import { loadStorage } from "../storage";
 import { PopupState } from "../types";
+import { getCurrentTab } from "../utils";
+import { PopupEmptyMessage } from "./PopupEmptyMessage";
 import { PopupHeader } from "./PopupHeader";
 import { PopupPreferences } from "./PopupPreferences";
-import { PopupSearch } from "./PopupSearch";
-import { PopupEmptyMessage } from "./PopupEmptyMessage";
-import { StylesheetList } from "./StylesheetList";
 import { PopupReducer } from "./PopupReducer";
-import { loadStorage } from "../storage";
-import { getCurrentTab } from "../utils";
+import { PopupSearch } from "./PopupSearch";
+import { StylesheetList } from "./StylesheetList";
 
 export async function getInitialPopupState (): Promise<PopupState> {
     const storage = await loadStorage();

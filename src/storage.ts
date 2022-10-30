@@ -1,5 +1,4 @@
-import { Stylesheet } from "./Stylesheet";
-import { StorageData, Stylesheets } from "./types";
+import { StorageData, Stylesheet, Stylesheets } from "./types";
 import { env, sortByName } from "./utils";
 
 export async function loadStorage (): Promise<StorageData> {
