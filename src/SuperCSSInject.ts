@@ -40,18 +40,63 @@ function createLinkElement (url: string) {
     return link;
 }
 
+/**
+ * Make sure the injected stylesheets are always placed last on the DOM
+ *  
+ * This handles SPAs where is common for additional assets to be loaded after 
+ * the initial page load and ensures the injected styles retain priority.
+ */
+function observeHeadMutations () {
+    const observer = new MutationObserver((mutationsList) => {
+        const isInjected = document.head.querySelector("link.SuperCSSInject");
+
+        if (isInjected) {
+            for (const mutation of mutationsList) {
+                for (const addedNode of mutation.addedNodes) {
+                    if (addedNode.nodeName.toLowerCase() === "link") {
+                        const node = addedNode as HTMLLinkElement;
+
+                        if (node.className !== "SuperCSSInject") {
+                            console.log("Move");
+                            observer.disconnect();
+                            move();
+
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    observer.observe(document.head, { childList: true });
+}
+
+function move () {
+    const links: NodeListOf<HTMLLinkElement> = document.head.querySelectorAll("link");
+    const injectedLinks = Array.from(links).filter((link) => link.className === "SuperCSSInject");
+
+    if (injectedLinks.length > 0) {
+        for (const link of injectedLinks) {
+            document.head.appendChild(link);
+        }
+
+        observeHeadMutations();
+    }
+}
+
 function main () {
     env.runtime.onMessage.addListener((message) => {
         if (message.action == "inject") {
-            console.log("Super CSS Inject!");
             update(message.urlList);
         }
     });
     
     env.runtime.sendMessage({ action: "load" });
+    observeHeadMutations();
 }
 
 window.addEventListener("load", main);
 
 // This is just to make the TS compiler happy
-export {};
+export { };
