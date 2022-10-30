@@ -1,32 +1,43 @@
 import { env } from "./utils";
 
-function inject (url: string) {
-    const link = createLinkElement(url);
-    document.head.append(link);
+function main () {
+    env.runtime.onMessage.addListener((message) => {
+        if (message.action == "inject") {
+            updateInjectedStylesheets(message.urlList);
+        }
+    });
+    
+    env.runtime.sendMessage({ action: "load" });
+    maintainStylesheetsOrder();
 }
 
-function clear (url: string) {
-    const link = document.querySelector(`link[href="${url}"].SuperCSSInject`);
-    link && link.remove();
-}
-
-function update (urlList: string[]) {
+function updateInjectedStylesheets (urlList: string[]) {
     const links: NodeListOf<HTMLLinkElement> = document.querySelectorAll("link.SuperCSSInject");
     const currentList = Array.from(links).map((link) => link.href);
     
     if (currentList.length > urlList.length) {
         for (const url of currentList) {
             if (!urlList.includes(url)) {
-                clear(url);
+                clearStylesheet(url);
             }
         } 
     } else {
         for (const url of urlList) {
             if (!currentList.includes(url)) {
-                inject(url);
+                injectStylesheet(url);
             }
         } 
     }
+}
+
+function clearStylesheet (url: string) {
+    const link = document.querySelector(`link[href="${url}"].SuperCSSInject`);
+    link && link.remove();
+}
+
+function injectStylesheet (url: string) {
+    const link = createLinkElement(url);
+    document.head.append(link);
 }
 
 function createLinkElement (url: string) {
@@ -46,25 +57,19 @@ function createLinkElement (url: string) {
  * This handles SPAs where is common for additional assets to be loaded after 
  * the initial page load and ensures the injected styles retain priority.
  */
-function observeHeadMutations () {
-    const observer = new MutationObserver((mutationsList) => {
-        const isInjected = document.head.querySelector("link.SuperCSSInject");
+function maintainStylesheetsOrder () {
+    const observer = new MutationObserver(() => {
+        const injectedLinks: NodeListOf<HTMLLinkElement> = document.head.querySelectorAll("link.SuperCSSInject");
+        
+        if (injectedLinks.length > 0) {
+            const links: NodeListOf<HTMLLinkElement> = document.head.querySelectorAll("link[rel='stylesheet']");
+            const lastLink: HTMLLinkElement = links[links.length - 1];
+            const isInjectedStylesheetLast = lastLink.className === "SuperCSSInject";
 
-        if (isInjected) {
-            for (const mutation of mutationsList) {
-                for (const addedNode of mutation.addedNodes) {
-                    if (addedNode.nodeName.toLowerCase() === "link") {
-                        const node = addedNode as HTMLLinkElement;
-
-                        if (node.className !== "SuperCSSInject") {
-                            console.log("Move");
-                            observer.disconnect();
-                            move();
-
-                            return;
-                        }
-                    }
-                }
+            if (!isInjectedStylesheetLast) {
+                observer.disconnect();
+                console.log("Move injected Stylesheets");
+                moveInjectedStylesheets();
             }
         }
     });
@@ -72,28 +77,14 @@ function observeHeadMutations () {
     observer.observe(document.head, { childList: true });
 }
 
-function move () {
-    const links: NodeListOf<HTMLLinkElement> = document.head.querySelectorAll("link");
-    const injectedLinks = Array.from(links).filter((link) => link.className === "SuperCSSInject");
+function moveInjectedStylesheets () {
+    const links: NodeListOf<HTMLLinkElement> = document.head.querySelectorAll("link.SuperCSSInject");
 
-    if (injectedLinks.length > 0) {
-        for (const link of injectedLinks) {
-            document.head.appendChild(link);
-        }
-
-        observeHeadMutations();
+    for (const link of links) {
+        document.head.appendChild(link);
     }
-}
 
-function main () {
-    env.runtime.onMessage.addListener((message) => {
-        if (message.action == "inject") {
-            update(message.urlList);
-        }
-    });
-    
-    env.runtime.sendMessage({ action: "load" });
-    observeHeadMutations();
+    maintainStylesheetsOrder();
 }
 
 window.addEventListener("load", main);
