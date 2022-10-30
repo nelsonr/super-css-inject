@@ -1,7 +1,6 @@
-import { sendInjectMessageToTab } from "../Messages";
 import { updateStorage } from "../storage";
 import { PopupState } from "../types";
-import { updateBadgesCount } from "../utils";
+import { sendInjectMessageToTab, updateBadgesCount } from "../utils";
 
 type State = PopupState;
 

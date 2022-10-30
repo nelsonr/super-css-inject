@@ -1,7 +1,6 @@
-import { TabId } from "../types";
-import { sendInjectMessageToTab } from "../Messages";
 import { loadStorage, updateStorage } from "../storage";
-import { env, updateBadgeCount, updateBadgesCount } from "../utils";
+import { TabId } from "../types";
+import { env, sendInjectMessageToTab, updateBadgeCount } from "../utils";
 
 async function getInjectedByTab (tabId: number): Promise<string[]> {
     const storage = await loadStorage();
@@ -26,10 +25,6 @@ env.runtime.onMessage.addListener((message, sender) => {
         tabId && onPageLoad(tabId);
         break;
 
-    case "stylesheetRemoved":
-        updateBadgesCount();
-        break;
-
     default:
         break;
     }
@@ -48,4 +43,4 @@ env.tabs.onRemoved.addListener(async (tabId) => {
 
 
 // This is just to make the TS compiler happy
-export {};
+export { };

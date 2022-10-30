@@ -167,3 +167,18 @@ export function getSelectionOrder (url: string, selectedList: string[]) {
 
     return null;
 }
+
+/**
+ * Sends an "inject" message to a browser tab with a list of stylesheet URLs.
+ * Sent by: Background Worker
+ * 
+ * @param tabId Browser tab identifier
+ * @param urlList List of stylesheet URLs
+ * @returns Promise
+ */
+export function sendInjectMessageToTab (tabId: number, urlList: string[]) {
+    return env.tabs.sendMessage(tabId, {
+        action: "inject",
+        urlList: urlList 
+    });
+}
