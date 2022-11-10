@@ -20,13 +20,8 @@ env.runtime.onMessage.addListener((message, sender) => {
 
     console.log("Message: ", message);
 
-    switch (message.action) {
-    case "load":
-        tabId && onPageLoad(tabId);
-        break;
-
-    default:
-        break;
+    if (message.action === "load" && tabId) {
+        onPageLoad(tabId);
     }
 });
 
