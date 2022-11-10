@@ -1,34 +1,24 @@
-import { SuperCSSInject } from "./types";
-import { env, importStylesheets } from "./utils";
+import { StorageData, Stylesheets } from "./types";
+import { env, sortByName } from "./utils";
 
-export async function loadStorage(): Promise<SuperCSSInject> {
-    const state: SuperCSSInject = {
-        stylesheets: [],
-        tabs: {},
+export async function loadStorage (): Promise<StorageData> {
+    const { SuperCSSInject } = await env.storage.local.get("SuperCSSInject");
+    const { stylesheets, injected } = SuperCSSInject || {};
+
+    return { 
+        stylesheets: importStylesheets(stylesheets || []),
+        injected: injected || {}
     };
-
-    const storage = await env.storage.local.get("SuperCSSInject");
-
-    if (storage.SuperCSSInject !== undefined) {
-        const { stylesheets } = storage.SuperCSSInject;
-
-        if (stylesheets !== undefined) {
-            state.stylesheets = importStylesheets(stylesheets);
-        }
-    }
-
-    return state;
 }
 
-export function updateStorage(data: SuperCSSInject) {
-    env.storage.local.set({ SuperCSSInject: data }).then(
-        () => console.log("Local storage updated!", data),
-        (error) => console.error(error)
-    );
+export function updateStorage (data: StorageData): Promise<void> {
+    return env.storage.local.set({ SuperCSSInject: data });
 }
 
-export function withStorage(data: SuperCSSInject) {
-    updateStorage(data);
-
-    return data;
+function importStylesheets (stylesheets: { url: string }[] | string[]): Stylesheets {
+    return stylesheets.map((stylesheet: { url: string } | string) => {
+        const isString = typeof stylesheet === "string";
+    
+        return isString ? stylesheet : stylesheet.url;
+    }).sort(sortByName);
 }

@@ -21,19 +21,71 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "indent": [
+        "array-bracket-newline": [
             "error",
-            4
+            "consistent"
+        ],
+        "array-bracket-spacing": [
+            "error",
+            "always"
+        ],
+        "array-element-newline": [
+            "error",
+            "consistent"
+        ],
+        "indent": [
+            "warn",
+            4,
+            {
+                "ignoredNodes": [
+                    "VariableDeclaration[declarations.length=0]"
+                ]
+            }
+        ],
+        "keyword-spacing": [
+            "error",
+            {
+                "before": true
+            }
         ],
         "linebreak-style": [
             "error",
             "unix"
+        ],
+        "newline-before-return": "error",
+        "object-curly-newline": [
+            "error",
+            {
+                "multiline": true
+            }
+        ],
+        "object-curly-spacing": [
+            "error",
+            "always"
+        ],
+        "object-property-newline": "error",
+        "padding-line-between-statements": [
+            "error",
+            {
+                "blankLine": "always",
+                "next": "block-like",
+                "prev": "*"
+            },
+            {
+                "blankLine": "always",
+                "next": "*",
+                "prev": "block-like"
+            }
         ],
         "quotes": [
             "error",
             "double"
         ],
         "semi": [
+            "error",
+            "always"
+        ],
+        "space-before-function-paren": [
             "error",
             "always"
         ]

@@ -1,5 +1,5 @@
-import { Stylesheet } from "./Stylesheet";
-import { Tab } from "./types";
+import { loadStorage } from "./storage";
+import { Stylesheets, Tab } from "./types";
 
 /**
  * Alias for accessing the browser extension API.
@@ -17,8 +17,9 @@ export const env = chrome || browser;
  * @param url A stylesheet URL
  * @returns The last portion of the URL
  */
-export function getStylesheetName(url: string) {
+export function getStylesheetName (url: string) {
     const urlParts = url.split("/");
+    
     return urlParts[urlParts.length - 1];
 }
 
@@ -47,23 +48,10 @@ export function sortByName (urlA: string, urlB: string) {
  * 
  * @returns Object with list of stylesheets active per browser tab
  */
-export function getTabInjectedStylesheets (tabId: number): Promise<string[]> {
-    return new Promise((resolve, reject) => {
-        try {
-            env.runtime.onMessage.addListener((message) => {
-                if (message.action === "tabStylesheets") {
-                    resolve(message.urlList);
-                }
-            });
-                        
-            env.runtime.sendMessage({ 
-                action: "getTabStylesheets", 
-                tabId: tabId 
-            });
-        } catch (error) {
-            reject(error); 
-        }
-    });
+export async function getInjectedStylesheets (tabId: number): Promise<Stylesheets> {
+    const storage = await loadStorage();
+
+    return storage.injected[tabId] || [];
 }
 
 /**
@@ -73,10 +61,13 @@ export function getTabInjectedStylesheets (tabId: number): Promise<string[]> {
  * @returns Tab information wrapped in a Promise
  */
 export async function getCurrentTab (): Promise<Tab> {
-    const queryOptions = { active: true, lastFocusedWindow: true };
+    const queryOptions = {
+        active: true,
+        currentWindow: true 
+    };
     
     // `tab` will either be a `tabs.Tab` instance or `undefined`.
-    const [tab] = await env.tabs.query(queryOptions);
+    const [ tab ] = await env.tabs.query(queryOptions);
 
     return tab;
 }
@@ -107,13 +98,36 @@ export function updateBadgeText (tabId: number, text: string) {
     });
 }
 
+export function updateBadgeCount (injected: string[], tabId: number) {
+    if (injected && injected.length > 0) {
+        console.log("Update count in Tab:", tabId);
+        updateBadgeText(tabId, injected.length.toString());
+    } else {
+        console.log("Clear count in Tab:", tabId);
+        updateBadgeText(tabId, "");
+    }
+}
+
+export async function updateBadgesCount () {
+    const { injected } = await loadStorage();
+    const tabs: chrome.tabs.Tab[] = await env.tabs.query({});
+
+    for (const tab of tabs) {
+        const tabId = tab.id;
+
+        if (tabId) {
+            updateBadgeCount(injected[tabId] || [], tabId);
+        }
+    }
+}
+
 /**
  * Validates an URL.
  * 
  * @param url The URL string to validate
  * @returns true or false
  */
-export function validateURL(url: string): boolean {
+export function validateURL (url: string): boolean {
     try {
         new URL(url);
     } catch (error) {
@@ -139,14 +153,14 @@ export const maxSelectionCount = 9;
  * @param selectedList A Set of the selected stylesheets for the current browser tab
  * @returns A string with the order or null if there's only a single tab selected
  */
-export function getSelectionOrder (url: string, selectedList: Set<string>) {
-    if (selectedList.has(url) && selectedList.size > 1) {
+export function getSelectionOrder (url: string, selectedList: string[]) {
+    if (selectedList.includes(url) && selectedList.length > 1) {
         // I mean...
-        if (selectedList.size > maxSelectionCount) {
+        if (selectedList.length > maxSelectionCount) {
             return "🤔";
         }
         
-        const order = [...selectedList].indexOf(url) + 1;
+        const order = [ ...selectedList ].indexOf(url) + 1;
         
         return `#${order}`;
     }
@@ -154,12 +168,17 @@ export function getSelectionOrder (url: string, selectedList: Set<string>) {
     return null;
 }
 
-export function importStylesheets(stylesheets: Stylesheet[] | string[]): string[] {
-    return stylesheets.map((stylesheet: Stylesheet | string) => {
-        if (typeof stylesheet === "string") {
-            return stylesheet;
-        } else {
-            return stylesheet.url;
-        }
-    }).sort(sortByName);
+/**
+ * Sends an "inject" message to a browser tab with a list of stylesheet URLs.
+ * Sent by: Background Worker
+ * 
+ * @param tabId Browser tab identifier
+ * @param urlList List of stylesheet URLs
+ * @returns Promise
+ */
+export function sendInjectMessageToTab (tabId: number, urlList: string[]) {
+    return env.tabs.sendMessage(tabId, {
+        action: "inject",
+        urlList: urlList 
+    });
 }
