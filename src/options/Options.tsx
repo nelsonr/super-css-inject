@@ -35,26 +35,12 @@ function Options (props: IProps) {
 
     return (
         <>
-            <header>
-                <div className="column">
-                    <img
-                        className="logo"
-                        src="icons/128x128.png"
-                        width="36"
-                        alt=""
-                    />
-                    <h3 className="title">Super CSS Inject Options</h3>
-                </div>
-            </header>
-
-            <main className="column">
-                <StylesheetForm onSubmit={addStylesheet} />
-                <StylesheetList
-                    list={state?.stylesheets}
-                    onRemove={removeStylesheet}
-                    onUpdate={updateStylesheet}
-                />
-            </main>
+            <StylesheetForm onSubmit={addStylesheet} />
+            <StylesheetList
+                list={state?.stylesheets}
+                onRemove={removeStylesheet}
+                onUpdate={updateStylesheet}
+            />
         </>
     );
 }
