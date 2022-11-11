@@ -1,7 +1,5 @@
-import { useEffect, useReducer, useRef, useState } from "react";
-import { loadStorage } from "../storage";
+import { useReducer, useState } from "react";
 import { PopupState } from "../types";
-import { getCurrentTab } from "../utils";
 import { PopupEmptyMessage } from "./PopupEmptyMessage";
 import { PopupHeader } from "./PopupHeader";
 import { PopupPreferences } from "./PopupPreferences";
@@ -9,42 +7,13 @@ import { PopupReducer } from "./PopupReducer";
 import { PopupSearch } from "./PopupSearch";
 import { StylesheetList } from "./StylesheetList";
 
-export async function getInitialPopupState (): Promise<PopupState> {
-    const storage = await loadStorage();
-    const currentTab = await getCurrentTab();
-
-    return {
-        stylesheets: storage.stylesheets,
-        injected: storage.injected,
-        tabId: currentTab?.id,
-    };
+interface IProps {
+    initialState: PopupState;
 }
 
-const emptyState: PopupState = {
-    stylesheets: [],
-    injected: {},
-    tabId: undefined,
-};
-
-function Popup () {
-    const firstRender = useRef(true);
-    const [ state, setState ] = useReducer(PopupReducer, emptyState);
+function Popup (props: IProps) {
+    const [ state, setState ] = useReducer(PopupReducer, props.initialState);
     const [ searchValue, setSearchValue ] = useState("");
-
-    useEffect(() => {
-        if (firstRender.current) {
-            console.log("Load from local storage");
-
-            getInitialPopupState().then((data: PopupState) => {
-                setState({
-                    type: "updateState",
-                    state: data,
-                });
-            });
-
-            firstRender.current = false;
-        }
-    }, []);
 
     const handleSelection = (isActive: boolean, url: string) => {
         if (state.tabId) {

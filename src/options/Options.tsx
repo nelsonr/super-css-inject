@@ -1,31 +1,15 @@
-import { useEffect, useReducer, useRef } from "react";
-import { loadStorage } from "../storage";
+import { useReducer } from "react";
 import { StorageData } from "../types";
 import { OptionsReducer } from "./OptionsReducer";
 import { StylesheetForm } from "./StylesheetForm";
 import { StylesheetList } from "./StylesheetList";
 
-const emptyState: StorageData = {
-    stylesheets: [],
-    injected: {},
-};
+interface IProps {
+    initialState: StorageData;
+}
 
-function Options () {
-    const firstRender = useRef(true);
-    const [ state, setState ] = useReducer(OptionsReducer, emptyState);
-
-    useEffect(() => {
-        if (firstRender.current) {
-            loadStorage().then((data: StorageData) => {
-                setState({
-                    type: "updateState",
-                    state: data,
-                });
-            });
-
-            firstRender.current = false;
-        }
-    }, []);
+function Options (props: IProps) {
+    const [ state, setState ] = useReducer(OptionsReducer, props.initialState);
 
     const addStylesheet = (url: string) => {
         setState({
