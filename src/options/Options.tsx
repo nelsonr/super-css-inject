@@ -1,4 +1,5 @@
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
+import { updateStorage } from "../storage";
 import { StorageData } from "../types";
 import { OptionsReducer } from "./OptionsReducer";
 import { StylesheetForm } from "./StylesheetForm";
@@ -10,6 +11,10 @@ interface IProps {
 
 function Options (props: IProps) {
     const [ state, setState ] = useReducer(OptionsReducer, props.initialState);
+
+    useEffect(() => {
+        updateStorage(state);
+    }, [ state ]);
 
     const addStylesheet = (url: string) => {
         setState({

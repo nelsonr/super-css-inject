@@ -1,20 +1,13 @@
-import { updateStorage } from "../storage";
-import { StorageData, Tabs } from "../types";
+import { InjectedTabs, StorageData } from "../types";
 import { validateURL } from "../utils";
 
-type State = StorageData;
-
 type Action =
-    | { type: "updateState"; state: State }
     | { type: "add"; url: string; }
     | { type: "update"; url: string; newURL: string; }
     | { type: "remove"; url: string; };
 
-export function OptionsReducer (state: State, action: Action): State {
+export function OptionsReducer (state: StorageData, action: Action): StorageData {
     switch (action.type) {
-    case "updateState":
-        return action.state;
-
     case "add":
         return add(state, action.url);
 
@@ -29,62 +22,55 @@ export function OptionsReducer (state: State, action: Action): State {
     }
 }
 
-function add (state: State, url: string): State {
+function add (state: StorageData, url: string): StorageData {
     const urlExists = state.stylesheets.find((stylesheet) => stylesheet === url);
     const isValid = validateURL(url);
 
     if (urlExists || !isValid) {
         return state;
     }
-    
+
     const updatedState = {
         ...state,
-        stylesheets: [ ...state.stylesheets, url ] 
+        stylesheets: [ ...state.stylesheets, url ]
     };
-    
-    updateStorage(updatedState);
 
     return updatedState;
 }
 
-function update (state: State, url: string, newURL: string): State {
+function update (state: StorageData, url: string, newURL: string): StorageData {
     const stylesheets = state.stylesheets.map((stylesheetURL) => {
         return stylesheetURL === url ? newURL : stylesheetURL;
     });
 
     const updatedState = {
         ...state,
-        stylesheets 
+        stylesheets
     };
-    
-    updateStorage(updatedState);
 
     return updatedState;
 }
 
-function remove (state: State, url: string): State {
+function remove (state: StorageData, url: string): StorageData {
     const stylesheets = state.stylesheets.filter((stylesheet) => stylesheet !== url);
     const injected = removeInjectedURL(state.injected, url);
     const updatedState = {
         stylesheets,
-        injected 
+        injected
     };
-    
-    updateStorage(updatedState);
-    
+
     return updatedState;
 }
 
-function removeInjectedURL (injected: Tabs, url: string): Tabs {
-    for (const tabId in injected) {
-        if (injected[tabId]) {
-            injected[tabId] = injected[tabId]?.filter(item => item !== url);
+function removeInjectedURL (injected: InjectedTabs, urlToRemove: string): InjectedTabs {
+    const updatedTabs = Object
+        .entries(injected)
+        .map(([ tabId, urlList ]) => {
+            return [ tabId, urlList.filter((url: string) => url !== urlToRemove) ];
+        })
+        .filter(([ _tabId, urlList ]) => {
+            return urlList.length > 0;
+        });
 
-            if (injected[tabId]?.length == 0) {
-                delete injected[tabId];
-            }
-        }
-    }
-    
-    return injected;
+    return Object.fromEntries(updatedTabs);
 }
