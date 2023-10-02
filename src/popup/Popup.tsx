@@ -1,5 +1,7 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
+import { updateStorage } from "../storage";
 import { PopupState } from "../types";
+import { sendInjectMessageToTab, updateBadgesCount } from "../utils";
 import { PopupEmptyMessage } from "./PopupEmptyMessage";
 import { PopupHeader } from "./PopupHeader";
 import { PopupPreferences } from "./PopupPreferences";
@@ -14,6 +16,17 @@ interface IProps {
 function Popup (props: IProps) {
     const [ state, setState ] = useReducer(PopupReducer, props.initialState);
     const [ searchValue, setSearchValue ] = useState("");
+
+    useEffect(() => {
+        if (state.tabId) {
+            const tabId = state.tabId;
+            
+            updateStorage(state).then(() => {
+                sendInjectMessageToTab(tabId, state.injected[tabId] || []);
+                updateBadgesCount();
+            });
+        }
+    }, [ state ]);
 
     const handleSelection = (isActive: boolean, url: string) => {
         if (state.tabId) {
