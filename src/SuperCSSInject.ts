@@ -10,10 +10,12 @@ function main () {
         if (message.action == "inject") {
             updateInjectedStylesheets(message.urlList);
 
-            if (!liveReloadSocket || liveReloadSocket.readyState === WebSocket.CLOSED) {
-                if (liveReloadConnectionAttempts < liveReloadMaxAttempts) {
-                    console.log("[SuperCSSInject]: Attempting to connect to Live Reload server.");
-                    listenToLiveReload();
+            if (message.urlList.length > 0) {
+                if (!liveReloadSocket || liveReloadSocket.readyState === WebSocket.CLOSED) {
+                    if (liveReloadConnectionAttempts < liveReloadMaxAttempts) {
+                        console.log("[SuperCSSInject]: Attempting to connect to Live Reload server.");
+                        listenToLiveReload();
+                    }
                 }
             }
         }
