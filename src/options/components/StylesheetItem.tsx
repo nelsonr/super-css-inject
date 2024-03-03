@@ -1,14 +1,14 @@
 import { FormEvent, useRef, useState } from "react";
-import { validateURL } from "../utils";
+import { validateURL } from "../../utils";
 
 interface IProps {
-    url: string;
+    stylesheet: string;
     onRemove: (url: string) => unknown;
     onUpdate: (url: string, newURL: string) => unknown;
 }
 
 export function StylesheetItem (props: IProps) {
-    const { url, onRemove, onUpdate } = props;
+    const { stylesheet: url, onRemove, onUpdate } = props;
     const [ isEdit, setIsEdit ] = useState(false);
     const [ isFormValid, setValidForm ] = useState(true);
     const textInputRef = useRef<HTMLInputElement>(null);

@@ -1,13 +1,13 @@
+import { Stylesheet } from "../Stylesheet";
 import {
+    getClassName,
     getSelectionOrder,
-    getStylesheetName,
-    maxSelectionCount,
-    setCSSClasses
+    maxSelectionCount
 } from "../utils";
 import { StylesheetItem } from "./StylesheetItem";
 
 interface IProps {
-    list: string[];
+    list: Stylesheet[];
     activeList: string[];
     search: string;
     onSelectionChange: (isActive: boolean, url: string) => unknown;
@@ -19,14 +19,13 @@ export function StylesheetList (props: IProps) {
     const searchIsEmpty = search.trim().length === 0;
     const searchRegex = new RegExp(search.trim(), "gi");
 
-    const stylesheets = list.map((stylesheet: string, index: number) => {
-        const isSelected = activeList.includes(stylesheet);
-        const selectionOrder = getSelectionOrder(stylesheet, activeList);
-        const name = getStylesheetName(stylesheet);
-        const isFiltered = !searchIsEmpty && name.match(searchRegex) === null;
+    const stylesheets = list.map((stylesheet: Stylesheet, index: number) => {
+        const isSelected = activeList.includes(stylesheet.url);
+        const selectionOrder = getSelectionOrder(stylesheet.url, activeList);
+        const isFiltered = !searchIsEmpty && stylesheet.name.match(searchRegex) === null;
 
         const handleActiveChange = (isActive: boolean) => {
-            return onSelectionChange(isActive, stylesheet);
+            return onSelectionChange(isActive, stylesheet.url);
         };
 
         return (
@@ -41,7 +40,7 @@ export function StylesheetList (props: IProps) {
         );
     });
 
-    const listClassName = setCSSClasses([
+    const listClassName = getClassName([
         "stylesheets-list",
         activeList.length > maxSelectionCount ? "stylesheets-list--emoji" : "",
     ]);

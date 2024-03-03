@@ -1,5 +1,6 @@
+import { Stylesheet } from "./Stylesheet";
 import { loadStorage } from "./storage";
-import { Stylesheets, Tab } from "./types";
+import { Tab } from "./types";
 
 /**
  * Alias for accessing the browser extension API.
@@ -26,13 +27,13 @@ export function getStylesheetName (url: string) {
 /**
  * Sorts URLs by the last part, aka the filename.
  * 
- * @param urlA URL string
- * @param urlB URL string
+ * @param stylesheetA Stylesheet
+ * @param stylesheetB Stylesheet
  * @returns Order between the two strings
  */
-export function sortByName (urlA: string, urlB: string) {
-    const nameA = getStylesheetName(urlA).toLowerCase();
-    const nameB = getStylesheetName(urlB).toLowerCase();
+export function sortByName (stylesheetA: Stylesheet, stylesheetB: Stylesheet) {
+    const nameA = stylesheetA.name.toLowerCase();
+    const nameB = stylesheetB.name.toLowerCase();
 
     if (nameA < nameB) {
         return -1;
@@ -48,11 +49,11 @@ export function sortByName (urlA: string, urlB: string) {
  * 
  * @returns Object with list of stylesheets active per browser tab
  */
-export async function getInjectedStylesheets (tabId: number): Promise<Stylesheets> {
-    const storage = await loadStorage();
+// export async function getInjectedStylesheets (tabId: number): Promise<Stylesheet[]> {
+//     const storage = await loadStorage();
 
-    return storage.injected[tabId] || [];
-}
+//     return storage.injected[tabId] || [];
+// }
 
 /**
  * Tries to get the current active browser tab (if any).
@@ -80,7 +81,7 @@ export async function getCurrentTab (): Promise<Tab> {
  * @param classes An array of CSS classes
  * @returns A string with CSS classes separated by spaces
  */
-export function setCSSClasses (classes: string[]): string {
+export function getClassName (classes: string[]): string {
     return classes.join(" ").trim();
 }
 
@@ -181,4 +182,12 @@ export function sendInjectMessageToTab (tabId: number, urlList: string[]) {
         action: "inject",
         urlList: urlList 
     });
+}
+
+export function cond<A,B> (cond: boolean, trueValue: A, falseValue: B) {
+    return cond ? trueValue : falseValue;
+}
+
+export function assign<T> (obj: T, key: string, value: unknown) {
+    return { ...obj, [key]: value };
 }

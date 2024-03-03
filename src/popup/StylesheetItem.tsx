@@ -1,7 +1,8 @@
-import { getStylesheetName, setCSSClasses } from "../utils";
+import { Stylesheet } from "../Stylesheet";
+import { getClassName } from "../utils";
 
 interface IProps {
-    stylesheet: string;
+    stylesheet: Stylesheet;
     isSelected: boolean;
     isHidden: boolean;
     selectionOrder: string | null;
@@ -11,9 +12,9 @@ interface IProps {
 export function StylesheetItem (props: IProps) {
     const { stylesheet, isSelected, selectionOrder, isHidden, onActiveToggle } = props;
     const handleActiveChange = () => onActiveToggle(!isSelected);
-    const stylesheetName = getStylesheetName(stylesheet);
+    const stylesheetName = stylesheet.name;
 
-    const className = setCSSClasses([
+    const className = getClassName([
         "stylesheet",
         isHidden ? "hidden" : "",
         isSelected ? "stylesheet--active" : "",

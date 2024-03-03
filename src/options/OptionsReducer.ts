@@ -1,9 +1,10 @@
+import { Stylesheet } from "../Stylesheet";
 import { InjectedTabs, StorageData } from "../types";
-import { validateURL } from "../utils";
+import { cond, validateURL } from "../utils";
 
 type Action =
     | { type: "add"; url: string; }
-    | { type: "update"; url: string; newURL: string; }
+    | { type: "update"; prevStyleheet: Stylesheet; newStylesheet: Stylesheet; }
     | { type: "remove"; url: string; };
 
 export function OptionsReducer (state: StorageData, action: Action): StorageData {
@@ -12,7 +13,7 @@ export function OptionsReducer (state: StorageData, action: Action): StorageData
         return add(state, action.url);
 
     case "update":
-        return update(state, action.url, action.newURL);
+        return update(state, action.prevStyleheet, action.newStylesheet);
 
     case "remove":
         return remove(state, action.url);
@@ -23,54 +24,68 @@ export function OptionsReducer (state: StorageData, action: Action): StorageData
 }
 
 function add (state: StorageData, url: string): StorageData {
-    const urlExists = state.stylesheets.find((stylesheet) => stylesheet === url);
+    const urlExists = state.stylesheets.find((stylesheet: Stylesheet) => stylesheet.url === url);
     const isValid = validateURL(url);
 
     if (urlExists || !isValid) {
         return state;
     }
 
-    const updatedState = {
+    return {
         ...state,
-        stylesheets: [ ...state.stylesheets, url ]
+        stylesheets: [ 
+            ...state.stylesheets, 
+            (new Stylesheet(url))
+        ]
     };
-
-    return updatedState;
 }
 
-function update (state: StorageData, url: string, newURL: string): StorageData {
-    const stylesheets = state.stylesheets.map((stylesheetURL) => {
-        return stylesheetURL === url ? newURL : stylesheetURL;
-    });
+function update (state: StorageData, prevStylesheet: Stylesheet, newStylesheet: Stylesheet): StorageData {
+    const isDuplicated = state.stylesheets.find((item) => { return item.url === newStylesheet.url; }) && prevStylesheet.url !== newStylesheet.url;
 
-    const updatedState = {
-        ...state,
-        stylesheets
-    };
+    // If the new URL already exists, do nothing
+    if (isDuplicated) {
+        return state;
+    }
 
-    return updatedState;
+    const updateStylesheet = (item: Stylesheet) => cond((item.url === prevStylesheet.url), newStylesheet, item);
+    const stylesheets = state.stylesheets.map(updateStylesheet);
+    const injected = updateInjectedURL(state.injected, prevStylesheet.url, newStylesheet.url);
+
+    return { stylesheets, injected };
 }
 
 function remove (state: StorageData, url: string): StorageData {
-    const stylesheets = state.stylesheets.filter((stylesheet) => stylesheet !== url);
+    const stylesheets = state.stylesheets.filter((item: Stylesheet) => item.url !== url);
     const injected = removeInjectedURL(state.injected, url);
-    const updatedState = {
-        stylesheets,
-        injected
-    };
 
-    return updatedState;
+    return { stylesheets, injected };
+}
+
+function updateInjectedURL (injected: InjectedTabs, urlToUpdate: string, newURL: string): InjectedTabs {
+    const updatedTabs = Object
+        .entries(injected)
+        .map(([ tabId, urlList ]) => {
+            return [ 
+                tabId, 
+                urlList.map((url: string) => cond((url === urlToUpdate), newURL, url)) 
+            ];
+        })
+        .filter(([ _tabId, urlList ]) => urlList.length > 0);
+
+    return Object.fromEntries(updatedTabs);
 }
 
 function removeInjectedURL (injected: InjectedTabs, urlToRemove: string): InjectedTabs {
     const updatedTabs = Object
         .entries(injected)
         .map(([ tabId, urlList ]) => {
-            return [ tabId, urlList.filter((url: string) => url !== urlToRemove) ];
+            return [ 
+                tabId, 
+                urlList.filter((url: string) => url !== urlToRemove) 
+            ];
         })
-        .filter(([ _tabId, urlList ]) => {
-            return urlList.length > 0;
-        });
+        .filter(([ _tabId, urlList ]) => urlList.length > 0);
 
     return Object.fromEntries(updatedTabs);
 }

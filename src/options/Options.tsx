@@ -1,9 +1,10 @@
 import { useEffect, useReducer } from "react";
+import { Stylesheet } from "../Stylesheet";
 import { updateStorage } from "../storage";
 import { StorageData } from "../types";
 import { OptionsReducer } from "./OptionsReducer";
-import { StylesheetForm } from "./StylesheetForm";
-import { StylesheetList } from "./StylesheetList";
+import { StylesheetForm } from "./components/StylesheetForm";
+import { StylesheetListTable } from "./components/StylesheetListTable";
 
 interface IProps {
     initialState: StorageData;
@@ -23,25 +24,25 @@ function Options (props: IProps) {
         });
     };
 
-    const updateStylesheet = (url: string, newURL: string) => {
+    const updateStylesheet = (prevStylesheet: Stylesheet, newStylesheet: Stylesheet) => {
         setState({
             type: "update",
-            url: url,
-            newURL: newURL,
+            prevStyleheet: prevStylesheet,
+            newStylesheet: newStylesheet
         });
     };
 
     const removeStylesheet = (url: string) => {
         setState({
             type: "remove",
-            url: url,
+            url: url
         });
     };
 
     return (
         <>
             <StylesheetForm onSubmit={addStylesheet} />
-            <StylesheetList
+            <StylesheetListTable
                 list={state?.stylesheets}
                 onRemove={removeStylesheet}
                 onUpdate={updateStylesheet}

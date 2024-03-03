@@ -1,25 +1,26 @@
+import { Stylesheet } from "../Stylesheet";
 import { OptionsReducer } from "./OptionsReducer";
 
-const states = { 
+const states = {
     empty: {
         stylesheets: [],
         injected: {}
     },
-    oneStylesheet:  {
+    oneStylesheet: {
         stylesheets: [
-            "http://127.0.0.1:3000/public/css/theme-A.css",
+            new Stylesheet("http://127.0.0.1:3000/public/css/theme-A.css"),
         ],
         injected: {}
     },
     renamedStyleSheet: {
         stylesheets: [
-            "http://127.0.0.1:3000/public/css/theme-B.css",
+            new Stylesheet("http://127.0.0.1:3000/public/css/theme-B.css"),
         ],
         injected: {}
     },
     oneInjectedStylesheet: {
         stylesheets: [
-            "http://127.0.0.1:3000/public/css/theme-A.css",
+            new Stylesheet("http://127.0.0.1:3000/public/css/theme-A.css"),
         ],
         injected: {
             "1010977386": [
@@ -29,7 +30,7 @@ const states = {
     },
     multipleTabsInjected: {
         stylesheets: [
-            "http://127.0.0.1:3000/public/css/theme-A.css",
+            new Stylesheet("http://127.0.0.1:3000/public/css/theme-A.css"),
         ],
         injected: {
             "1010977386": [
@@ -42,8 +43,8 @@ const states = {
     },
     multipleInjectedStylesheets: {
         stylesheets: [
-            "http://127.0.0.1:3000/public/css/theme-A.css",
-            "http://127.0.0.1:3000/public/css/theme-B.css"
+            new Stylesheet("http://127.0.0.1:3000/public/css/theme-A.css"),
+            new Stylesheet("http://127.0.0.1:3000/public/css/theme-B.css"),
         ],
         injected: {
             "1010977386": [
@@ -59,22 +60,22 @@ describe("Adding and updating stylesheets", () => {
         const urlToAdd = "http://127.0.0.1:3000/public/css/theme-A.css";
         const updatedState = OptionsReducer(states.empty, {
             type: "add",
-            url: urlToAdd 
+            url: urlToAdd
         });
-    
+
         expect(updatedState).toStrictEqual(states.oneStylesheet);
     });
-    
+
     test("Renames a stylesheet", () => {
-        const urlToRename = "http://127.0.0.1:3000/public/css/theme-A.css";
-        const newUrl = "http://127.0.0.1:3000/public/css/theme-B.css";
+        const prevStylesheet = new Stylesheet("http://127.0.0.1:3000/public/css/theme-A.css");
+        const newStylesheet = new Stylesheet("http://127.0.0.1:3000/public/css/theme-B.css");
         
         const updatedState = OptionsReducer(states.oneStylesheet, {
             type: "update",
-            url: urlToRename,
-            newURL: newUrl 
+            prevStyleheet: prevStylesheet,
+            newStylesheet: newStylesheet
         });
-    
+
         expect(updatedState).toStrictEqual(states.renamedStyleSheet);
     });
 });
@@ -84,9 +85,9 @@ describe("Removing stylesheets", () => {
         const urlToRemove = "http://127.0.0.1:3000/public/css/theme-A.css";
         const updatedState = OptionsReducer(states.oneStylesheet, {
             type: "remove",
-            url: urlToRemove 
+            url: urlToRemove
         });
-    
+
         expect(updatedState).toStrictEqual(states.empty);
     });
 
@@ -94,9 +95,9 @@ describe("Removing stylesheets", () => {
         const urlToRemove = "http://127.0.0.1:3000/public/css/theme-A.css";
         const updatedState = OptionsReducer(states.oneInjectedStylesheet, {
             type: "remove",
-            url: urlToRemove 
+            url: urlToRemove
         });
-    
+
         expect(updatedState).toStrictEqual(states.empty);
     });
 
@@ -104,9 +105,9 @@ describe("Removing stylesheets", () => {
         const urlToRemove = "http://127.0.0.1:3000/public/css/theme-A.css";
         const updatedState = OptionsReducer(states.multipleTabsInjected, {
             type: "remove",
-            url: urlToRemove 
+            url: urlToRemove
         });
-    
+
         expect(updatedState).toStrictEqual(states.empty);
     });
 
@@ -114,9 +115,9 @@ describe("Removing stylesheets", () => {
         const urlToRemove = "http://127.0.0.1:3000/public/css/theme-B.css";
         const updatedState = OptionsReducer(states.multipleInjectedStylesheets, {
             type: "remove",
-            url: urlToRemove 
+            url: urlToRemove
         });
-    
+
         expect(updatedState).toStrictEqual(states.oneInjectedStylesheet);
     });
 });
