@@ -304,9 +304,10 @@ table th {
 
 table tbody tr td {
     border-bottom: 1px solid var(--color-neutral-2);
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
+}
+
+table tbody tr td:first-child {
+    overflow: auto;
 }
 
 table tr:last-child td {
