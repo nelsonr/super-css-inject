@@ -39,12 +39,14 @@ export function StylesheetItemTableRow (props: IProps) {
                     <button
                         className="button button--small button--icon"
                         onClick={handleEdit}
+                        title="Edit"
                     >
                         {iconEdit}
                     </button>
                     <button
                         className="button button--small button--icon button--danger"
                         onClick={handleRemove}
+                        title="Delete"
                     >
                         {iconDelete}
                     </button>
