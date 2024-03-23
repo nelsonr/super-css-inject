@@ -35,7 +35,7 @@ export function StylesheetItemTableRow (props: IProps) {
                         <span>&mdash;</span>
                     </If>
                 </td>
-                <td className="whitespace-nowrap">
+                <td className="whitespace-nowrap text-align-end">
                     <button
                         className="button button--small button--icon"
                         onClick={handleEdit}

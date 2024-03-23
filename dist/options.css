@@ -1,3 +1,7 @@
+/* ============================================= */
+/* CSS Variables                                 */
+/* ============================================= */
+
 :root {
     --main-width: 800px;
     
@@ -32,9 +36,19 @@
     --space-4: 16px;
     --space-6: 24px;
     --space-8: 32px;
+    
+    /* Font Sizes */
+    --font-size-1: 4px;
+    --font-size-2: 8px;
+    --font-size-3: 12px;
+    --font-size-4: 16px;
+    --font-size-6: 24px;
+    --font-size-8: 32px;
 }
 
-/* Base Rules */
+/* ============================================= */
+/* Base Styles                                   */
+/* ============================================= */
 
 * {
     box-sizing: border-box;
@@ -78,7 +92,9 @@ code {
     padding-inline: var(--space-1);
 }
 
-/* Layout */
+/* ============================================= */
+/* Layout                                        */
+/* ============================================= */
 
 body {
     height: 100%;
@@ -96,7 +112,46 @@ body {
     padding-inline: var(--space-4);
 }
 
-/* Header */
+/* ============================================= */
+/* Form                                          */
+/* ============================================= */
+
+.form-field {
+    margin-bottom: var(--space-4);
+}
+
+.form-field label {
+    display: block;
+    color: var(--color-neutral-6);
+    font-size: var(--font-size-3);
+    margin-bottom: var(--space-1);
+    text-transform: uppercase;
+}
+
+.form-actions {
+    margin-top: var(--space-6);
+}
+
+/* Not Valid */
+
+.validation-message {
+    display: none;
+    color: var(--color-red);
+    font-size: var(--font-size-3);
+    margin-top: var(--space-1);
+}
+
+.form-field--not-valid input[type="text"] {
+    border-color: var(--color-red);
+}
+
+.form-field--not-valid .validation-message {
+    display: block;
+}
+
+/* ============================================= */
+/* Header                                        */
+/* ============================================= */
 
 header {
     background-color: var(--color-neutral-7);
@@ -123,7 +178,9 @@ header .title {
     font-weight: normal;
 }
 
-/* Main Content */
+/* ============================================= */
+/* Main                                          */
+/* ============================================= */
 
 main {
     height: 100%;
@@ -133,8 +190,11 @@ main {
     text-align: center;
 }
 
-/* Buttons */
+/* ============================================= */
+/* Buttons                                       */
+/* ============================================= */
 
+button,
 .button {
     color: currentColor;
     background-color: var(--color-neutral-2);
@@ -143,12 +203,17 @@ main {
     font-weight: bold;
     font-size: 12px;
     border: 0;
-    padding-inline: var(--space-3);
+    padding-inline: var(--space-4);
     border-radius: var(--border-radius);
+    height: 40px;
 }
 
 .button:hover {
     background-color: var(--color-neutral-3);
+}
+
+button + button {
+    margin-left: var(--space-4);
 }
 
 /* Buttons > Success */
@@ -188,7 +253,7 @@ main {
     min-width: 32px;
     height: 32px;
     border-radius: var(--border-radius);
-    padding-inline: var(--space-2);
+    padding-inline: var(--space-4);
     margin-left: var(--space-2);
     position: relative;
     outline: 0;
@@ -216,7 +281,10 @@ main {
     height: auto;
 }
 
-/* Table */
+/* ============================================= */
+/* Table                                         */
+/* ============================================= */
+
 
 table {
     width: 100%;
@@ -245,7 +313,9 @@ table tr:last-child td {
     border-bottom: 0;
 }
 
-/* Stylesheets Form */
+/* ============================================= */
+/* Stylesheet Form                               */
+/* ============================================= */
 
 .stylesheets-form {
     display: flex;
@@ -268,14 +338,18 @@ table tr:last-child td {
     margin-top: var(--space-2);
 }
 
-/* Stylesheets Empty Message */
+/* ============================================= */
+/* Stylesheet Empty Message                      */
+/* ============================================= */
 
 .stylesheets-message {
     margin-top: var(--space-6);
     letter-spacing: 0.6px;
 }
 
-/* Stylesheets List */
+/* ============================================= */
+/* Stylesheet List                               */
+/* ============================================= */
 
 .stylesheets-list {
     padding: var(--space-2);
@@ -287,7 +361,9 @@ table tr:last-child td {
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
-/* Stylesheet Item */
+/* ============================================= */
+/* Stylesheet Item                               */
+/* ============================================= */
 
 .stylesheet {
     gap: var(--space-2);
@@ -324,26 +400,9 @@ table tr:last-child td {
     height: 32px;
 }
 
-/* Utilities */
-
-.hidden {
-    display: none;
-}
-
-.text-help {
-    text-align: left;
-    font-size: 12px;
-}
-
-.text-error {
-    color: var(--color-red);
-    text-align: left;
-    font-size: 12px;
-}
-
-.whitespace-nowrap {
-    white-space: nowrap;
-}
+/* ============================================= */
+/* Modal                                         */
+/* ============================================= */
 
 .modal {
     position: fixed;
@@ -376,6 +435,7 @@ table tr:last-child td {
     z-index: 1;
     opacity: 0;
     border-radius: var(--border-radius);
+    min-width: 500px;
 }
 
 .modal--show {
@@ -397,4 +457,31 @@ table tr:last-child td {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+/* ============================================= */
+/* Utilities                                     */
+/* ============================================= */
+
+.hidden {
+    display: none;
+}
+
+.text-help {
+    text-align: left;
+    font-size: 12px;
+}
+
+.text-error {
+    color: var(--color-red);
+    text-align: left;
+    font-size: 12px;
+}
+
+.text-align-end {
+    text-align: end;
+}
+
+.whitespace-nowrap {
+    white-space: nowrap;
 }
