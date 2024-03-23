@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import { setCSSClasses, validateURL } from "../utils";
+import { getClassName, validateURL } from "../../utils";
 
 const isFirefox = /Firefox\/\d{1,2}/.test(navigator.userAgent);
 const mixedContentURL = "https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content#Warnings_in_Web_Console";
@@ -35,12 +35,12 @@ export function StylesheetForm (props: IProps) {
 
     const inputClassName = isFormValid ? "" : "not-valid";
 
-    const errorClassName = setCSSClasses([
+    const errorClassName = getClassName([
         "text-error",
         isFormValid ? "hidden" : "",
     ]);
 
-    const mixedContentClassName = setCSSClasses([
+    const mixedContentClassName = getClassName([
         "text-help",
         isFirefox ? "" : "hidden",
     ]);

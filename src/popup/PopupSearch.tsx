@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { setCSSClasses } from "../utils";
+import { getClassName } from "../utils";
 
 interface IProps {
     search: string;
@@ -23,7 +23,7 @@ export function PopupSearch (props: IProps) {
         }
     };
 
-    const iconClassName = setCSSClasses([
+    const iconClassName = getClassName([
         "icon-cross",
         search.length > 0 ? "" : "hidden",
     ]);

@@ -1,4 +1,4 @@
-import { setCSSClasses } from "../utils";
+import { getClassName } from "../../utils";
 import { StylesheetItem } from "./StylesheetItem";
 
 interface IProps {
@@ -13,13 +13,13 @@ export function StylesheetList (props: IProps) {
     const stylesheetsList = list.map((stylesheet, index) => 
         <StylesheetItem 
             key={index}
-            url={stylesheet}
+            stylesheet={stylesheet}
             onRemove={onRemove} 
             onUpdate={onUpdate}
         />
     );
 
-    const messageClassName = setCSSClasses([
+    const messageClassName = getClassName([
         "stylesheets-message",
         (list.length > 0 ? "hidden" : "")
     ]);
