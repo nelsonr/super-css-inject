@@ -1,14 +1,17 @@
 import { Stylesheet } from "./Stylesheet";
-import { StorageData } from "./types";
+import { Config, StorageData } from "./types";
 import { env, sortByName } from "./utils";
+
+export const defaultConfig: Config = { webSocketServerURL: "ws://localhost:35729/livereload" };
 
 export async function loadStorage (): Promise<StorageData> {
     const { SuperCSSInject } = await env.storage.local.get("SuperCSSInject");
-    const { stylesheets, injected } = SuperCSSInject || {};
+    const { stylesheets, injected, config } = SuperCSSInject || {};
 
-    return { 
+    return {
         stylesheets: importStylesheets(stylesheets || []),
-        injected: injected || {}
+        injected: injected || {},
+        config: config ? { ...defaultConfig, ...config } : {}
     };
 }
 

@@ -52,7 +52,7 @@ export function StylesheetForm (props: IProps) {
                     type="text"
                     name="stylesheet-url"
                     value={url}
-                    onChange={(ev) => setURL(ev.target.value)}
+                    onInput={(ev) => setURL(ev.target.value)}
                     placeholder="Add a CSS file URL here..."
                     className={inputClassName}
                 />

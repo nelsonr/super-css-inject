@@ -2,16 +2,15 @@ import { loadStorage, updateStorage } from "../storage";
 import { TabId } from "../types";
 import { env, sendInjectMessageToTab, updateBadgeCount } from "../utils";
 
-async function getInjectedByTab (tabId: number): Promise<string[]> {
-    const storage = await loadStorage();
-
-    return storage.injected[tabId] || [];
-}
-
 async function onPageLoad (tabId: number) {
-    const injected = await getInjectedByTab(tabId);
-    
-    sendInjectMessageToTab(tabId, injected);
+    const storage = await loadStorage();
+    const injected = storage.injected[tabId] || [];
+
+    sendInjectMessageToTab({
+        tabId: tabId,
+        urlList: injected,
+        webSocketServerURL: storage.config.webSocketServerURL
+    });
     updateBadgeCount(injected, tabId);
 }
 

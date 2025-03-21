@@ -62,7 +62,7 @@ export function PopupSearch (props: IProps) {
                 type="text"
                 placeholder="Search"
                 value={search}
-                onChange={handleOnChange}
+                onInput={handleOnChange}
                 ref={searchInputEl}
             />
         </div>

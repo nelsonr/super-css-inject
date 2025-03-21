@@ -1,3 +1,4 @@
+import { Message } from "./types";
 import { env } from "./utils";
 
 let liveReloadSocket: WebSocket;
@@ -6,15 +7,17 @@ let liveReloadIsConnected = false;
 const liveReloadMaxAttempts = 3;
 
 function main () {
-    env.runtime.onMessage.addListener((message) => {
-        if (message.action == "inject") {
-            updateInjectedStylesheets(message.urlList);
+    env.runtime.onMessage.addListener((message: Message) => {
+        const { action, urlList, webSocketServerURL } = message;
 
-            if (message.urlList.length > 0) {
+        if (action == "inject") {
+            updateInjectedStylesheets(urlList);
+
+            if (urlList.length > 0) {
                 if (!liveReloadSocket || liveReloadSocket.readyState === WebSocket.CLOSED) {
                     if (liveReloadConnectionAttempts < liveReloadMaxAttempts) {
-                        console.log("[SuperCSSInject]: Attempting to connect to Live Reload server.");
-                        listenToLiveReload();
+                        console.log(`[SuperCSSInject]: Attempting to connect to Live Reload server on: "${webSocketServerURL}"`);
+                        listenToLiveReload(webSocketServerURL);
                     }
                 }
             }
@@ -25,11 +28,11 @@ function main () {
     maintainStylesheetsOrder();
 }
 
-function listenToLiveReload () {
-    liveReloadSocket = new WebSocket("ws://localhost:35729/livereload");
+function listenToLiveReload (websocketServerURL: string) {
+    liveReloadSocket = new WebSocket(websocketServerURL);
 
     liveReloadSocket.addEventListener("open", () => {
-        console.log("[SuperCSSInject]: Connected successfully to Live Reload server.");
+        console.log("[SuperCSSInject]: Connected successfully to Live Reload server:", websocketServerURL);
         liveReloadIsConnected = true;
         env.runtime.sendMessage({ action: "livereload_connect" });
     });
