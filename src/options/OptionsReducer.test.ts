@@ -1,22 +1,31 @@
 import { Stylesheet } from "../Stylesheet";
+import { StorageData } from "../types";
 import { OptionsReducer } from "./OptionsReducer";
 
-const states = {
+const webSocketServerURL = "ws://localhost:35729/livereload";
+
+const states: Record<string, StorageData> = {
     empty: {
         stylesheets: [],
-        injected: {}
+        injected: {},
+        config: { webSocketServerURL: webSocketServerURL }
+
     },
     oneStylesheet: {
         stylesheets: [
             new Stylesheet("http://127.0.0.1:3000/public/css/theme-A.css"),
         ],
-        injected: {}
+        injected: {},
+        config: { webSocketServerURL: webSocketServerURL }
+
     },
     renamedStyleSheet: {
         stylesheets: [
             new Stylesheet("http://127.0.0.1:3000/public/css/theme-B.css"),
         ],
-        injected: {}
+        injected: {},
+        config: { webSocketServerURL: webSocketServerURL }
+
     },
     oneInjectedStylesheet: {
         stylesheets: [
@@ -26,7 +35,9 @@ const states = {
             "1010977386": [
                 "http://127.0.0.1:3000/public/css/theme-A.css",
             ]
-        }
+        },
+        config: { webSocketServerURL: webSocketServerURL }
+
     },
     multipleTabsInjected: {
         stylesheets: [
@@ -39,7 +50,9 @@ const states = {
             "2021021202": [
                 "http://127.0.0.1:3000/public/css/theme-A.css",
             ]
-        }
+        },
+        config: { webSocketServerURL: webSocketServerURL }
+
     },
     multipleInjectedStylesheets: {
         stylesheets: [
@@ -51,7 +64,10 @@ const states = {
                 "http://127.0.0.1:3000/public/css/theme-A.css",
                 "http://127.0.0.1:3000/public/css/theme-B.css"
             ]
-        }
+        },
+
+        config: { webSocketServerURL: webSocketServerURL }
+
     },
 };
 
@@ -69,7 +85,7 @@ describe("Adding and updating stylesheets", () => {
     test("Renames a stylesheet", () => {
         const prevStylesheet = new Stylesheet("http://127.0.0.1:3000/public/css/theme-A.css");
         const newStylesheet = new Stylesheet("http://127.0.0.1:3000/public/css/theme-B.css");
-        
+
         const updatedState = OptionsReducer(states.oneStylesheet, {
             type: "update",
             prevStyleheet: prevStylesheet,

@@ -20,9 +20,13 @@ function Popup (props: IProps) {
     useEffect(() => {
         if (state.tabId) {
             const tabId = state.tabId;
-            
+
             updateStorage(state).then(() => {
-                sendInjectMessageToTab(tabId, state.injected[tabId] || []);
+                sendInjectMessageToTab({
+                    tabId: tabId,
+                    urlList: (state.injected[tabId] || []),
+                    webSocketServerURL: state.config.webSocketServerURL
+                });
                 updateBadgesCount();
             });
         }

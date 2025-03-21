@@ -6,14 +6,15 @@ import { getCurrentTab } from "../utils";
 import Popup from "./Popup";
 
 async function getInitialPopupState (): Promise<PopupState> {
-    const [ storage, currentTab ] = await Promise.all([ 
-        loadStorage(), 
-        getCurrentTab() 
+    const [ storage, currentTab ] = await Promise.all([
+        loadStorage(),
+        getCurrentTab()
     ]);
 
     return {
         stylesheets: storage.stylesheets,
         injected: storage.injected,
+        config: storage.config,
         tabId: currentTab?.id,
     };
 }

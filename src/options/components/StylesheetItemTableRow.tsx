@@ -1,5 +1,4 @@
 import { Stylesheet } from "../../Stylesheet";
-import If from "../../common/If";
 
 interface IProps {
     stylesheet: Stylesheet;
@@ -25,15 +24,15 @@ export function StylesheetItemTableRow (props: IProps) {
                     </a>
                 </td>
                 <td className="whitespace-nowrap">
-                    <If condition={stylesheet.shortname !== ""}>
+                    {stylesheet.shortname !== "" && (
                         <a href={stylesheet.url} target="_blank" rel="noreferrer">
                             {stylesheet.shortname}
                         </a>
-                    </If>
-
-                    <If condition={stylesheet.shortname === ""}>
+                    )}
+                    
+                    {stylesheet.shortname === "" && (
                         <span>&mdash;</span>
-                    </If>
+                    )}
                 </td>
                 <td className="whitespace-nowrap text-align-end">
                     <button

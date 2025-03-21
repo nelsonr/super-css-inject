@@ -8,10 +8,10 @@ export function PopupReducer (state: PopupState, action: Action): PopupState {
     switch (action.type) {
     case "inject":
         return inject(state, action.tabId, action.url);
-        
+
     case "clear":
         return clear(state, action.tabId, action.url);
-        
+
     default:
         return state;
     }
@@ -19,7 +19,7 @@ export function PopupReducer (state: PopupState, action: Action): PopupState {
 
 function inject (state: PopupState, tabId: number, url: string): PopupState {
     const { injected } = structuredClone(state);
-    
+
     if (injected[tabId]) {
         if (!injected[tabId]?.includes(url)) {
             injected[tabId]?.push(url);
@@ -27,7 +27,7 @@ function inject (state: PopupState, tabId: number, url: string): PopupState {
     } else {
         injected[tabId] = [ url ];
     }
-    
+
     return {
         ...state,
         injected
@@ -44,9 +44,9 @@ function clear (state: PopupState, tabId: number, url: string): PopupState {
             delete injected[tabId];
         }
     }
-                    
+
     return {
         ...state,
-        injected 
+        injected
     };
 }

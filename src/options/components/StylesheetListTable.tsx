@@ -30,15 +30,6 @@ export function StylesheetListTable (props: IProps) {
         }
     };
 
-    const stylesheetsListTableContents = list.map((stylesheet, index) => 
-        <StylesheetItemTableRow 
-            key={index}
-            stylesheet={stylesheet}
-            onRemove={onRemove} 
-            onEdit={handleEdit}
-        />
-    );
-
     const messageClassName = getClassName([
         "stylesheets-message",
         (list.length > 0 ? "hidden" : "")
@@ -47,17 +38,17 @@ export function StylesheetListTable (props: IProps) {
     const showEditModal = () => {
         if (editStylesheet && isEdit) {
             return (
-                <EditModal 
-                    stylesheet={editStylesheet} 
-                    onUpdate={handleUpdate} 
-                    onCancel={handleCancel} 
+                <EditModal
+                    stylesheet={editStylesheet}
+                    onUpdate={handleUpdate}
+                    onCancel={handleCancel}
                 ></EditModal>
             );
         }
 
         return <></>;
     };
-    
+
     return (
         <>
             <div className={messageClassName}>No stylesheets added yet.</div>
@@ -72,10 +63,19 @@ export function StylesheetListTable (props: IProps) {
                             </tr>
                         </thead>
                         <tbody>
-                            {stylesheetsListTableContents}
+                            {list.map((stylesheet, index) => {
+                                return (
+                                    <StylesheetItemTableRow
+                                        key={index}
+                                        stylesheet={stylesheet}
+                                        onRemove={onRemove}
+                                        onEdit={handleEdit}
+                                    />
+                                );
+                            })}
                         </tbody>
                     </table>
-            
+
                     {showEditModal()}
                 </div>
             </If>
