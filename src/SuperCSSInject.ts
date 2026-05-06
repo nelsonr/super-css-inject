@@ -48,8 +48,9 @@ function listenToLiveReload (websocketServerURL: string) {
         const injectedStylesheets: NodeListOf<HTMLLinkElement> = document.head.querySelectorAll(".SuperCSSInject");
 
         injectedStylesheets.forEach((stylesheet: HTMLLinkElement) => {
-            // eslint-disable-next-line no-self-assign
-            stylesheet.href = stylesheet.href;
+            const timestamp = Date.now();
+            const url = stylesheet.href.replace(/(\?_v=\d+)?$/, `?_v=${timestamp}`);
+            stylesheet.setAttribute("href", url);
         });
     });
 

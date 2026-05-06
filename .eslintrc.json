@@ -66,7 +66,6 @@
             "error",
             "always"
         ],
-        // "object-property-newline": "error",
         "padding-line-between-statements": [
             "error",
             {
